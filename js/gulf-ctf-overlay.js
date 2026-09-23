@@ -85,6 +85,7 @@
       if (e.key === 'h' || e.key === 'H') openNearest();
     });
     g.GulfCTF = { openNearest: openNearest, overlay: overlay };
+    try { g.dispatchEvent(new Event('gulf-pins-ready')); } catch (e) {}
     console.info('[GulfCTF] pins', g.GULF_PINS.length);
   }
   function load() {
