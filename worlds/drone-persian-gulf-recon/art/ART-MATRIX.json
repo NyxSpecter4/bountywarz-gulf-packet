@@ -1,0 +1,26 @@
+{
+  "version": "gulf-2.0-flagship",
+  "generated": "2026-09-22T19:20:00Z",
+  "law": "Hold 30–45 FPS. 3D cost only: shared facade materials + capped billboards + 1 AR plane. UI art is free. Never dump scenes/ or teach-posters into 3D.",
+  "live_routes": ["/gulf", "/worlds/drone-persian-gulf-recon/"],
+  "live_site_base": "/worlds/drone-persian-gulf-recon/art/",
+  "fpsBudget": {
+    "target": "30-45",
+    "desktop": { "billboards": 12, "waterTiles": 1, "arPlanes": 1, "aniso": 4 },
+    "mobile": { "billboards": 6, "waterTiles": 1, "arPlanes": 1, "aniso": 2 },
+    "shedding": { "billboards": 4, "waterTiles": 1, "arPlanes": 1 }
+  },
+  "rows": [
+    { "id": "sky-gulf-dusk.png", "wire": "manifest-env-heroes", "fpsTier": "ui-2d-once", "note": "skybox / load splash only" },
+    { "id": "title-gulf-flagship.png", "wire": "manifest-2d", "fpsTier": "ui-2d-once", "note": "DroneArt.role(title) — identity metric" },
+    { "id": "hud-gulf-chrome.png", "wire": "manifest+breach-hud", "fpsTier": "ui-2d", "note": "reference chrome; live HUD is DOM overlay" },
+    { "id": "tex-water-hormuz.png", "wire": "live-art-materials", "fpsTier": "shared-mat", "note": "ONE water material for Hormuz + Marina" },
+    { "id": "tex-facade-dubai-glass.png", "wire": "live-art-materials", "fpsTier": "shared-mat", "note": "Marina / Jebel glass instanced" },
+    { "id": "tex-quay-concrete.png", "wire": "live-art-materials", "fpsTier": "shared-mat", "note": "port apron / quay" },
+    { "id": "13_hormuz_ctf_hud.png", "wire": "skip-sf-legacy", "fpsTier": "never-load-default", "note": "baked photo HUD — do not bind in 3D" },
+    { "id": "14_purdue_idmz_cutaway.png", "wire": "manifest+AR+ui", "fpsTier": "ar-one-plane", "note": "pin board only" },
+    { "id": "15_iec62443_zones_conduits.png", "wire": "manifest+AR+ui", "fpsTier": "ar-one-plane", "note": "pin board only" },
+    { "id": "16_nist_80053_ot_overlay.png", "wire": "manifest+AR+ui", "fpsTier": "ar-one-plane", "note": "schematic only" },
+    { "id": "17_dubai_marina_nofly.png", "wire": "manifest+AR+ui", "fpsTier": "ar-one-plane", "note": "legal pin board" }
+  ]
+}

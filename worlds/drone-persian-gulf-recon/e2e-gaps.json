@@ -1,0 +1,82 @@
+{
+  "driven": "2026-09-22T22:06:00Z",
+  "url": "https://bountywarz.com/gulf",
+  "result": "FAIL_E2E",
+  "player_path_reached": "HUD chrome only — no fly, no ring, no HACK, no quiz, no flag",
+  "p0_boot": [
+    { "id": "WORLD-BOOT-404", "url": "/js/world-boot.js", "effect": "GulfWorld never constructed" },
+    { "id": "GULF-WORLD-UNDEFINED", "observed": "window.GulfWorld === undefined" },
+    { "id": "CANVAS-DEFAULT", "observed": "#game-canvas 300x150 — never resized, no frame" },
+    { "id": "BOOT-DEPS-RETRY", "log": "[GulfWorld] boot deps missing — retrying (loop)" },
+    { "id": "EXPORT-SYNTAX", "log": "Uncaught SyntaxError: Unexpected token 'export'", "effect": "an ESM file loaded as classic script; kills that engine" },
+    { "id": "NO-TARGET", "copy": "NO TARGET / Fly within 400m — gate has nothing to measure" }
+  ],
+  "p0_404_gulf_modules": [
+    "/js/gulf-contracts.js",
+    "/js/gulf-territory.js",
+    "/js/gulf-certs.js",
+    "/js/gulf-comms.js",
+    "/js/gulf-human-review.js",
+    "/js/gulf-simli-voice.js",
+    "/js/gulf-combat.js",
+    "/js/gulf-ctf-overlay.js",
+    "/js/gulf-multiplayer.js",
+    "/js/gulf-fps-guard.js",
+    "/js/gulf-jeopardy-hook.js",
+    "/js/gulf-endgame.js",
+    "/js/gulf-e2e-hook.js",
+    "/js/world-boot.js",
+    "/data/gulf-fixtures.js",
+    "/data/building-twins.js",
+    "/data/drone-classes.js",
+    "/data/faction-spawns.js",
+    "/data/territory-sectors.js"
+  ],
+  "p1_pedagogy_404": [
+    "/js/pedagogy-acs-map.js",
+    "/js/pedagogy-quiz-bank.js",
+    "/js/pedagogy-spaced-recall.js",
+    "/js/pedagogy-tutorial.js",
+    "/js/drone-loadout.js",
+    "/js/drone-ar-cards.js",
+    "/js/drone-killchain-cards.js",
+    "/js/drone-bounty-board.js",
+    "/js/drone-model-loader.js",
+    "/js/cert-ladder-bar.js"
+  ],
+  "p1_wiring_misfires": [
+    { "id": "CTF-BUTTON-ORPHAN", "ui": "OPEN CTF OVERLAY", "script": "/js/gulf-ctf-overlay.js 404 — click is a no-op on the 3D world" },
+    { "id": "TUTORIAL-ORPHAN", "ui": "Complete the tutorial", "script": "pedagogy-tutorial.js 404" },
+    { "id": "JEOPARDY-HOOK-404", "script": "/js/gulf-jeopardy-hook.js", "data": "/data/jeopardy-competition.json 200 — overlay data lives, Gulf hook does not" },
+    { "id": "ASCII-OK-WORLD-DEAD", "ok": ["/js/cockpit-ascii-ctf.js", "/data/world-ascii-cockpit.json plates hormuz-radar kharg-terminal tanura-pipeline jebel-port"], "dead": "no GPS pin to attach a plate to" },
+    { "id": "BATTLE-TERMINAL-SF", "script": "/worlds/drone-san-francisco-recon/js/drone-battle-terminal.js — London/SF bench on a Gulf URL" },
+    { "id": "KINETIGOR-PRODUCT-404", "url": "/data/kinetigor-product.json" },
+    { "id": "AIS-TICKER-HARDCODE", "copy": "VLCC Al-Khubar clears the Oman TSS inbound gate at 14.2 kts — not /api/maritime" },
+    { "id": "TERRITORY-STUB", "copy": "US TF-59 0 / IRGC 0 / TRADE 0 / CONTESTED 6 — gulf-territory.js 404" },
+    { "id": "FACTORY-SLUG-404", "url": "/worlds/drone-persian-gulf-recon/" },
+    { "id": "ART-NOT-ON-ROUTE", "repo": "worlds/drone-persian-gulf-recon/art/*", "live": "not requested by /gulf" }
+  ],
+  "p2_product_risks": [
+    "HUD advertises MOUSE aim/fire on a sandbox cyber range",
+    "Nation-flag teams (US TF-59 / IRGC) on the score chip — fights the purple-team ROE",
+    "engine-core.js has no InstancedMesh / Raycaster — 400m gate cannot run without coords",
+    "realtime-sync + PeerJS + Supabase + territory-presence is not one sim clock",
+    "Three r160 deprecation warning: classic three.min path"
+  ],
+  "what_does_work": [
+    "GET /gulf 200",
+    "Three 0.160 + engine-core + jeopardy-overlay + cockpit-ascii-ctf + battle-terminal 200",
+    "world-ascii-cockpit.json has persian-gulf plates",
+    "jeopardy-competition.json names persian-gulf cells",
+    "BKT 31 concepts, GameEventBus, skill-tree init (0 points)"
+  ],
+  "e2e_definition_of_done": [
+    "world-boot.js + GulfWorld construct",
+    "canvas fills viewport and draws water/sky mats",
+    "at least one pin at 26.5667,56.25 within 400m",
+    "H opens quiz from overlay banks",
+    "flag writes Jeopardy dock + .ln.ritual",
+    "gulf-ctf-overlay.js 200 and binds ctf-overlay.json",
+    "no boot-deps retry loop"
+  ]
+}

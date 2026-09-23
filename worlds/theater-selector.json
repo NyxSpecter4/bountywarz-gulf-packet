@@ -1,0 +1,39 @@
+{
+  "home_title": "BOUNTYWARZ — Choose Your Theater",
+  "default_theater": "drone-persian-gulf-recon",
+  "cta": "FLY THE GULF",
+  "smoothness": {
+    "target_fps": 60,
+    "hud_draw": "CSS/canvas overlay, not a full-scene re-render",
+    "basemap": "vector + baked tiles, no 568 baked portrait plates",
+    "first_paint_ms": 1500,
+    "preload": ["01_persian_gulf_environment", "13_hormuz_ctf_hud", "spawn ring"]
+  },
+  "theaters": [
+    {
+      "id": "drone-persian-gulf-recon",
+      "label": "Persian Gulf",
+      "rank_now": "FLAGSHIP — default spawn. Art + CTF overlay exist in repo. Live route 404 until Devin deploys.",
+      "route": "/worlds/drone-persian-gulf-recon/",
+      "spawn": { "lat": 26.5667, "lon": 56.25, "alt_ft": 400 },
+      "loop": "Hormuz GNSS class + 800-82 / 62443 / 800-53 OT + Marina legal",
+      "status": "READY_IN_REPO_NOT_LIVE"
+    },
+    {
+      "id": "drone-london-recon",
+      "label": "London",
+      "rank_now": "ONLY LIVE FLYABLE WORLD on bountywarz.com today. Smoothest because the engine already runs it.",
+      "route": "/worlds/drone-london-recon/",
+      "loop": "Thames intel op, historical 1586 / 1943 / 2026 layers",
+      "status": "LIVE"
+    },
+    {
+      "id": "drone-san-francisco-recon",
+      "label": "San Francisco",
+      "rank_now": "ART FOLDER ONLY (London-named tiles live in this slug). No flyable SF map on the site.",
+      "route": "/worlds/drone-san-francisco-recon/",
+      "loop": "Bay IoT / zero-trust basin (README claim, not shipped)",
+      "status": "ART_ONLY"
+    }
+  ]
+}

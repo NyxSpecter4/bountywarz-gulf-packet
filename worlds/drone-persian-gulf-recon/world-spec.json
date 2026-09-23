@@ -1,0 +1,37 @@
+{
+  "concept": "Persian Gulf Drone Recon — Strait of Hormuz Arena",
+  "slug": "drone-persian-gulf-recon",
+  "route": "/gulf",
+  "alias_routes": ["/gulf", "/worlds/drone-persian-gulf-recon/"],
+  "flagship": true,
+  "art_layers": [
+    { "filename": "title-gulf-flagship.png", "z": -1, "role": "title splash — identity metric" },
+    { "filename": "sky-gulf-dusk.png", "z": 0, "role": "environment skybox dusk-only" },
+    { "filename": "tex-water-hormuz.png", "z": 1, "role": "shared-mat water" },
+    { "filename": "tex-facade-dubai-glass.png", "z": 1, "role": "shared-mat marina glass" },
+    { "filename": "tex-quay-concrete.png", "z": 1, "role": "shared-mat port apron" },
+    { "filename": "hud-gulf-chrome.png", "z": 9, "role": "UI reference — implement as DOM" }
+  ],
+  "subject": "3D spatial CTF cybersecurity overlay over a photoreal digital-twin of the Persian Gulf: Strait of Hormuz AIS GNSS spoofing detection ECDIS integrity VLCC chokepoint ICS-OT awareness Kharg Jebel Ali Ras Laffan desalination SCADA Dubai Marina GCAA DCAA CAR-UAR drone law investigation red team recon blue team defense purple team detection Athelgard guide Security+ ICS skill-cards FAA Part 107 analog GCAA 400ft AGL",
+  "scale": "geographic",
+  "archetype_hint": "terrain-city",
+  "style_lock": {
+    "palette": {
+      "bg": "#06060e",
+      "primary": "#d4af37",
+      "secondary": "#22d3ee",
+      "accent": "#ffaa33",
+      "red": "#ef4444",
+      "blue": "#3b82f6",
+      "purple": "#a855f7"
+    }
+  },
+  "functors": {
+    "era": "2026 digital-twin with time-layers 1908 pearling and 1984 Tanker War",
+    "lens": "purple — detection, attribution-class, legal-compliance; no kinetic or live-infra exploit recipes",
+    "data_source": "NVD + AIS/MarineTraffic-class feeds + EIA + OpenSky + GCAA/DCAA published regs",
+    "pedagogy": "BountyWarz loop: fly ring → hold HACK → quiz → seal card; 7-phase kill chain; red/blue/purple roles",
+    "agency": "Athelgard",
+    "modality": "3d"
+  }
+}

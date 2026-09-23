@@ -1,0 +1,41 @@
+{
+  "concept": "Hormuz Purple-Team CTF — live-twin GPS pins under ASCII cockpit layers",
+  "meaning": "A pin is a lat/lon join key. Live feeds paint the twin. ASCII layers are the 60fps HUD. Purple scores CLASS + EVIDENCE, never a live packet.",
+  "roe": "Sandbox twin only. No packets leave the sim. Classify public anomaly classes. No jam/spoof/OT recipes.",
+  "live_join": {
+    "key": ["lat", "lon", "alt_ft"],
+    "gate_m": 400,
+    "center": { "lat": 26.5667, "lon": 56.25 },
+    "feeds": [
+      { "api": "/api/maritime", "binds": "PIN-HORMUZ-NARROW PIN-GULF-OMAN PIN-JEBEL-ALI", "use": "AIS twin tracks → crop-circle / dark-gap / destination-distress CLASS" },
+      { "api": "/api/aircraft", "binds": "PIN-DXB-BUFFER PIN-MARINA-SKYLINE", "use": "air tracks near HLS → GCAA 5km legal CLASS" },
+      { "api": "/api/airspace", "binds": "PIN-MARINA-SKYLINE PIN-DXB-BUFFER", "use": "NOTAM / no-fly rings" },
+      { "api": "/api/kev-latest", "binds": "all OT pins", "use": "KEV id → /api/cve-to-mission quiz stem, not an exploit" },
+      { "api": "/api/cve-to-mission", "binds": "PIN-KHARG-TWIN PIN-IDMZ", "use": "mission card + TARGET_QUIZZES shape" },
+      { "api": "/api/terrain", "binds": "sky/ground", "use": "height sample at drone GPS" }
+    ]
+  },
+  "ascii_layers": [
+    { "z": 0, "id": "WORLD", "engine": "WebGL terrain + 3 shared mats", "cost": "3D", "art": ["sky-gulf-dusk.png", "tex-water-hormuz.png", "tex-facade-dubai-glass.png", "tex-quay-concrete.png"] },
+    { "z": 1, "id": "GPS-PINS", "engine": "one InstancedMesh of rings", "cost": "1 draw", "source": "ctf-overlay.json pins[] lat/lon" },
+    { "z": 2, "id": "LIVE-TICKER", "engine": "DOM .hbt-log", "cost": "ui-2d free", "classes": [".ln.sys", ".ln.cmd", ".ln.err", ".ln.ritual"] },
+    { "z": 3, "id": "ASCII-COCKPIT", "engine": ".hud-bridge-terminal z-48", "cost": "ui-2d free", "parts": [".hbt-crest pre", ".hbt-frame-top", ".hbt-frame-bot", ".hbt-input-row", "scanline ::before"] },
+    { "z": 4, "id": "PURPLE-MODAL", "engine": "quiz overlay", "cost": "ui-2d", "shape": "TARGET_QUIZZES { q, choices[3], correct, cert, card, why }" }
+  ],
+  "event_loop": [
+    "spawn at GPS holding",
+    "LIVE-TICKER prints SYS AIS TWIN lines from /api/maritime at that lat/lon",
+    "fly within 400m of a pin (engine already has this copy on /gulf)",
+    "H hold = breach the TWIN not the plant",
+    "ASCII crest flips RED|BLUE|PURPLE",
+    "quiz from pin.red_quiz or pin.blue_quiz",
+    "Purple confirms only if CLASS + public citation match",
+    "flag{...} writes .ln.ritual + Hack Card + cert line"
+  ],
+  "how_i_would_show_it": {
+    "player_view": "3D Hormuz in the empty HUD center; four ASCII layers around it; pins snap to live GPS",
+    "operator_view": "same cockpit + Purple score column (evidence quality 0-5)",
+    "spectator_view": "top-down ASCII chart, pins as glyphs, ticker of classifications — no weapon cam",
+    "do_not_show": "real MMSI targeting, jammer UI, OT write commands, nation flags as teams"
+  }
+}

@@ -1,0 +1,58 @@
+{
+  "city": "PersianGulf",
+  "rubric": "London art-director probe cloned: identity, weatherLive, dayNightHonest, materials, props, fps — 0-10 then mean.",
+  "london_live_baseline": { "overall": 3.7, "why": "title/sky/facade/GLB 404s; weather API 500; materials applied ~0" },
+  "gulf_v1_stills": {
+    "overall": 4.4,
+    "grades": {
+      "identity": 2,
+      "weatherLive": 3,
+      "dayNightHonest": 6,
+      "materials": 3,
+      "props": 2,
+      "fps": 5,
+      "tileWrap": 3,
+      "hudRead": 4,
+      "authenticity": 7
+    },
+    "notes": [
+      "02 water has a wake diagonal — fails wrap",
+      "04 glass is a perspective photo — cannot instance",
+      "13 HUD bakes a portrait + ships into the world",
+      "files are 1176x784 JPEG named .png, not 1024 POT"
+    ]
+  },
+  "gulf_v2_flagship": {
+    "overall": 7.2,
+    "target_after_wire": 8.2,
+    "grades": {
+      "identity": 8,
+      "weatherLive": 3,
+      "dayNightHonest": 8,
+      "materials": 7.5,
+      "props": 2,
+      "fps": 8,
+      "tileWrap": 7,
+      "hudRead": 8,
+      "authenticity": 8
+    },
+    "notes": [
+      "title-gulf-flagship.png owns DroneArt.role(title) → identity 8",
+      "tex-water-hormuz / tex-facade-dubai-glass / tex-quay-concrete are shared-mat, even lighting",
+      "hud-gulf-chrome leaves the center empty so 3D shows through",
+      "sky-gulf-dusk is dusk-only — do not keep it on during day (realtime law)",
+      "weatherLive stays 3 until /api/weather works at Hormuz coords",
+      "props stay 2 until tanker/crane billboards exist (cap 12 desktop)",
+      "Devin must resample tiles to 1024² POT before bind"
+    ]
+  },
+  "ux_law": {
+    "safe_harbor_first": true,
+    "hud": "DOM overlay using chrome layout, not a textured quad",
+    "contrast": "gold/cyan on #06060e, min 4.5:1",
+    "empty_center": true,
+    "default_theater": "persian-gulf",
+    "live_url_that_exists": "/gulf",
+    "factory_url_still_404": "/worlds/drone-persian-gulf-recon/"
+  }
+}
