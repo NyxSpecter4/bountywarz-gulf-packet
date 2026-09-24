@@ -1,1 +1,1 @@
-connector write probe 2026-09-23
+engine-kit + UI/UX HUD 2026-09-24 — canvas, pick, classify, thumb zone

@@ -2,14 +2,22 @@
 
 Persian Gulf flagship packet for BountyWarz.
 
-- Playable twin (GitHub Pages / this repo root `index.html`)
-- Specs under `worlds/drone-persian-gulf-recon/`
-- Classic scripts only (`js/world-boot.js`, `js/gulf-ctf-overlay.js`) — **no `export`** so they will not throw `Unexpected token 'export'` if dropped onto `/gulf`
+Playable twin at repo-root `index.html` (GitHub Pages).
+
+## Engine kit (our own components)
+
+Classic scripts only — **no `export`**:
+
+- `js/engine-pick.js` — `EngineCore.createRenderer` / `makeFpsMeter` / `makePick` / `earnCert`
+- `js/world-boot.js` — canvas fill, water/sky, WASD fly, nearest-target copy
+- `js/gulf-raycaster.js` — InstancedMesh rings through shared pick
+- `js/gulf-ctf-overlay.js` — 12-pin classify loop
+- `js/gulf-hud.js` — execution + evaluation gulfs from the UI/UX audit
+
+Proof: `_engineCoreActive`, `_enginePickReady`, `_lastFps`, click a ring, H / Classify.
+
+Training twins only. No AIS spoof recipes. No live plant.
 
 ## Live prod gap
 
-`https://bountywarz.com/gulf` still 404s these files. Copy this repo’s `js/world-boot.js` and `js/gulf-ctf-overlay.js` onto that app, plus `data/ctf-overlay.json`. The twin here is the sandbox classify loop (12 GPS pins, red quizzes, flags). No AIS spoof recipes. No live plant.
-
-## Revoke leaked tokens
-
-If a PAT was pasted into chat, revoke it in GitHub Settings → Developer settings → Tokens.
+`https://bountywarz.com/gulf` still needs a Vercel deploy (`git.deploymentEnabled=false`). Copy these classic scripts onto that app plus `data/ctf-overlay.json`.
