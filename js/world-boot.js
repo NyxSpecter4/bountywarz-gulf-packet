@@ -1,4 +1,4 @@
-/* world-boot.js — CLASSIC SCRIPT. No export. */
+/* world-boot.js — CLASSIC SCRIPT. No export. Owns canvas + GulfWorld. */
 (function (g) {
   'use strict';
   var retry = 0;
@@ -12,13 +12,16 @@
     c.style.height = '100%';
     c.style.display = 'block';
   }
+  function art(name) { return g.__ART_BASE ? g.__ART_BASE + name : 'worlds/drone-persian-gulf-recon/art/' + name; }
   function boot() {
-    var c = document.getElementById('game-canvas');
-    if (!c) {
-      c = document.createElement('canvas');
-      c.id = 'game-canvas';
-      document.body.appendChild(c);
+    if (g.GulfWorld && g.GulfWorld.renderer) {
+      if (g.GulfRaycasterEngine && !g.GulfRaycaster) {
+        g.GulfRaycasterEngine.attach(g.GulfWorld.scene, g.GulfWorld.camera, g.GulfWorld.renderer, g.GulfWorld.canvas);
+      }
+      return;
     }
+    var c = document.getElementById('game-canvas');
+    if (!c) { c = document.createElement('canvas'); c.id = 'game-canvas'; document.body.appendChild(c); }
     resize(c);
     g.addEventListener('resize', function () { resize(c); });
     var THREE = g.THREE;
@@ -33,48 +36,20 @@
     renderer.setSize(c.width, c.height, false);
     renderer.setClearColor(0x06060e, 1);
     var scene = new THREE.Scene();
-    var cam = new THREE.PerspectiveCamera(55, c.width / Math.max(1, c.height), 0.1, 4000);
+    var cam = new THREE.PerspectiveCamera(55, c.width / Math.max(1, c.height), 0.1, 8000);
     cam.position.set(0, 80, 220);
     cam.lookAt(0, 0, 0);
     scene.add(new THREE.DirectionalLight(0xffd27a, 1.1));
     scene.add(new THREE.AmbientLight(0x1a2a40, 0.7));
-    var waterTex = new THREE.TextureLoader().load('worlds/drone-persian-gulf-recon/art/tex-water-hormuz.png');
+    var waterTex = new THREE.TextureLoader().load(art('tex-water-hormuz.png'));
     waterTex.wrapS = waterTex.wrapT = THREE.RepeatWrapping;
     waterTex.repeat.set(8, 8);
     var water = new THREE.Mesh(new THREE.PlaneGeometry(2400, 2400), new THREE.MeshStandardMaterial({ map: waterTex, roughness: 0.35, metalness: 0.05, color: 0x1a4a5a }));
     water.rotation.x = -Math.PI / 2;
     scene.add(water);
-    scene.background = new THREE.TextureLoader().load('worlds/drone-persian-gulf-recon/art/sky-gulf-dusk.png');
-    var ringGeo = new THREE.RingGeometry(6, 8, 24);
-    var ringMat = new THREE.MeshBasicMaterial({ color: 0x22d3ee, side: THREE.DoubleSide, transparent: true, opacity: 0.85 });
-    var rings = new THREE.InstancedMesh(ringGeo, ringMat, 16);
-    scene.add(rings);
-    function layoutPins(pins) {
-      var dummy = new THREE.Object3D();
-      var origin = { lat: 26.5667, lon: 56.25 };
-      var n = Math.min(16, pins.length);
-      for (var i = 0; i < n; i++) {
-        dummy.position.set((pins[i].lon - origin.lon) * 900, 2.5, (origin.lat - pins[i].lat) * 900);
-        dummy.rotation.x = -Math.PI / 2;
-        dummy.updateMatrix();
-        rings.setMatrixAt(i, dummy.matrix);
-      }
-      rings.count = Math.max(1, n);
-      rings.instanceMatrix.needsUpdate = true;
-    }
-    layoutPins(g.GULF_PINS || []);
-    g.addEventListener('gulf-pins-ready', function () { layoutPins(g.GULF_PINS || []); console.info('[GulfWorld] pins attached', (g.GULF_PINS || []).length); });
+    scene.background = new THREE.TextureLoader().load(art('sky-gulf-dusk.png'));
     g.GulfWorld = { scene: scene, camera: cam, renderer: renderer, canvas: c };
-    var raycaster = new THREE.Raycaster();
-    var pointer = new THREE.Vector2();
-    g.GulfRaycaster = raycaster;
-    c.addEventListener('pointerdown', function (ev) {
-      var r = c.getBoundingClientRect();
-      pointer.x = ((ev.clientX - r.left) / r.width) * 2 - 1;
-      pointer.y = -((ev.clientY - r.top) / r.height) * 2 + 1;
-      raycaster.setFromCamera(pointer, cam);
-      if (raycaster.intersectObject(rings).length && g.GulfCTF) g.GulfCTF.openNearest();
-    });
+    if (g.GulfRaycasterEngine) g.GulfRaycasterEngine.attach(scene, cam, renderer, c);
     function frame(now) {
       cam.position.x = Math.sin(now / 20000) * 30;
       cam.lookAt(0, 0, 0);
@@ -92,4 +67,4 @@
   }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot);
   else boot();
-})(window);
+}(window));
