@@ -1,1 +1,1 @@
-engine-kit + UI/UX HUD 2026-09-24 — canvas, pick, classify, thumb zone
+SYNTH KIT on main. Play: WASD / K / L / click fire. Proof: GulfWorld.renderer + _gulfCombat.
