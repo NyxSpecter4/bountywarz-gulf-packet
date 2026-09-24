@@ -27,9 +27,19 @@
   function loadSolved() { try { return JSON.parse(localStorage.getItem(STORE) || '{}'); } catch (_) { return {}; } }
   function saveSolved(map) { try { localStorage.setItem(STORE, JSON.stringify(map)); } catch (_) {} }
   function solvedCount() { var map = loadSolved(); return Object.keys(map).filter(function (k) { return map[k]; }).length; }
-  function paintSolved() { var el = $('gulf-solved'); if (el) el.textContent = String(solvedCount()); }
+  function paintSolved() {
+    var el = $('gulf-solved');
+    if (el) el.textContent = String(solvedCount());
+    var total = $('gulf-total');
+    if (total) total.textContent = String((g.GULF_PINS || []).length || 0);
+  }
   function quizFor(pin) { return pin[role] || pin.red_quiz || pin.blue_quiz || pin.purple_quiz || null; }
-  function emitThought(pin, ok) {
+  function emitThought(pin, ok, teach) {
+    try {
+      g.dispatchEvent(new CustomEvent('gulf-classify', {
+        detail: { ok: ok, name: pin && (pin.name || pin.id), teach: teach || (pin && pin.id), id: pin && pin.id }
+      }));
+    } catch (_) {}
     try { g.dispatchEvent(new CustomEvent('kimi.thought.recorded', { detail: { source: 'gulf.overlay', challenge_id: pin && pin.id, reasoning_content: (ok ? 'classified ' : 'missed ') + (pin && (pin.id || pin.name)), content: pin && pin.name, speculative: !ok } })); } catch (_) {}
     try {
       fetch('/api/athelgard-telemetry', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ sessionId: (localStorage.getItem('bw_athelgard_session') || 'GULF'), worldId: 'drone-persian-gulf', events: [{ type: ok ? 'gulf-classify-ok' : 'gulf-classify-miss', pin: pin && pin.id, t: Date.now() }] }), keepalive: true }).catch(function () {});
@@ -42,6 +52,7 @@
     var box = $('gulf-quiz');
     if (!box) return;
     var html = '<button id="quiz-x" type="button" aria-label="Close">×</button>';
+    html += '<div class="gq-kicker">' + (role === 'blue_quiz' ? 'BLUE · DEFEND' : role === 'purple_quiz' ? 'PURPLE · SCORE' : 'RED · CLASSIFY') + '</div>';
     html += '<div class="gq-h">' + (pin.name || pin.id) + '</div>';
     html += '<div class="gq-p">' + q.prompt + '</div>';
     (q.choices || []).forEach(function (c, i) { html += '<button class="gq-c" data-i="' + i + '">' + c + '</button>'; });
@@ -54,15 +65,37 @@
         var ok = Number(btn.getAttribute('data-i')) === q.answer;
         if (ok) {
           var map = loadSolved(); map[pin.id || pin.name] = true; saveSolved(map); paintSolved();
-          btn.textContent = 'Yes.'; emitThought(pin, true);
-          setTimeout(function () { box.style.display = 'none'; }, 700);
-        } else { btn.textContent = q.teach || 'Not that.'; emitThought(pin, false); }
+          btn.textContent = 'Yes — class locked.';
+          btn.classList.add('ok');
+          emitThought(pin, true, q.teach);
+          if (g.EngineCore && g.EngineCore.earnCert) g.EngineCore.earnCert(pin.flag || pin.id, 'classify');
+          setTimeout(function () { box.style.display = 'none'; }, 900);
+        } else {
+          btn.textContent = q.teach || 'Not that class.';
+          btn.classList.add('miss');
+          emitThought(pin, false, q.teach);
+        }
       };
     });
   }
-  function openPin(i) { var pins = g.GULF_PINS || []; if (!pins[i]) return; idx = i; renderQuiz(pins[i]); }
+  function openPin(i) {
+    var pins = g.GULF_PINS || [];
+    if (!pins[i]) return;
+    idx = i;
+    var list = $('sites');
+    if (list) {
+      list.querySelectorAll('[data-i]').forEach(function (x) {
+        x.classList.toggle('on', Number(x.getAttribute('data-i')) === i);
+      });
+    }
+    renderQuiz(pins[i]);
+  }
   function openNearest() {
     var pins = g.GULF_PINS || [];
+    if (g._gulfNearest && pins[g._gulfNearest.index]) {
+      openPin(g._gulfNearest.index);
+      return;
+    }
     var me = (g.GulfRaycaster && g.GulfRaycaster.here) ? g.GulfRaycaster.here() : ((g.GulfRaycasterEngine && g.GulfRaycasterEngine.here) ? g.GulfRaycasterEngine.here() : { lat: 26.5667, lon: 56.25 });
     var dist = (g.GulfRaycaster && g.GulfRaycaster.distKm) || (g.GulfRaycasterEngine && g.GulfRaycasterEngine.distKm);
     var best = 0, bestD = 1e9;
@@ -78,14 +111,14 @@
     paintSolved();
     var list = $('sites') || $('gulf-pins') || $('gulf-ctf-target-list');
     if (list && list.tagName !== 'PRE') {
+      var solved = loadSolved();
       list.innerHTML = g.GULF_PINS.map(function (p, i) {
         var label = String(p.name || p.id).replace(/\s+—.*$/, '');
-        return '<button class="pin" type="button" data-i="' + i + '">' + label + '</button>';
+        var done = solved[p.id || p.name] ? ' done' : '';
+        return '<button class="pin' + done + '" type="button" data-i="' + i + '"><b>' + label + '</b><span>' + (p.anomaly_class ? String(p.anomaly_class).split('(')[0] : (p.track || '')) + '</span></button>';
       }).join('');
       list.querySelectorAll('[data-i]').forEach(function (b) {
         b.onclick = function () {
-          list.querySelectorAll('[data-i]').forEach(function (x) { x.classList.remove('on'); });
-          b.classList.add('on');
           openPin(Number(b.getAttribute('data-i')));
         };
       });
@@ -96,7 +129,12 @@
       if (e.key === '2') role = 'blue_quiz';
       if (e.key === '3') role = 'purple_quiz';
     });
-    g.GulfCTF = { openNearest: openNearest, openPin: openPin, overlay: overlay, setRole: function (r) { role = r; } };
+    g.GulfCTF = {
+      openNearest: openNearest,
+      openPin: openPin,
+      overlay: overlay,
+      setRole: function (r) { role = r; }
+    };
     try { g.dispatchEvent(new Event('gulf-pins-ready')); } catch (e) {}
   }
   function load() {
