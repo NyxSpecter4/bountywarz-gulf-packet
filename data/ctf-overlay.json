@@ -1,522 +1,588 @@
 {
-  "world": "drone-persian-gulf-recon",
-  "title": "HORMUZ GATE — Red / Blue / Purple CTF Overlay",
-  "classification": "TRAINING SIMULATION ONLY",
-  "rules_of_engagement": [
-    "No live packets leave the sim. All AIS/GNSS/ICS nodes are sandboxed twins.",
-    "Red may RECON, CLASSIFY, and REPORT. Red may not be given recipes to jam GNSS, spoof AIS, or operate OT against real plants.",
-    "Blue defends: detect anomaly class, isolate twin, restore integrity, write the after-action.",
-    "Purple owns the detection spine and scores both sides on evidence quality.",
-    "Dubai Marina track is a LEGAL INVESTIGATION, not a flight-authorization bypass."
-  ],
-  "teams": {
-    "RED": {
-      "name": "SPECTER RECON",
-      "color": "#ef4444",
-      "mission": "Map the twin. Identify which anomaly class is present. Capture recon flags by answering detection quizzes at each pin.",
-      "tools_allowed": ["DATA SNIFFER", "OVERRIDE (quiz unlock only)", "AIS DIFF VIEW", "NOTAM / GCAA overlay"]
-    },
-    "BLUE": {
-      "name": "HORMUZ WATCH",
-      "color": "#3b82f6",
-      "mission": "Detect, contain, restore the twin. Capture defense flags by choosing the correct control (NIST 800-82 / IMO cyber / GCAA).",
-      "tools_allowed": ["INTEGRITY CHECK", "SEGMENT OT", "RESTORE ECDIS FIX", "LEGAL HOLD"]
-    },
-    "PURPLE": {
-      "name": "ATHELGARD RANGE",
-      "color": "#a855f7",
-      "mission": "Score evidence. Confirm flags only when the learner cites a public class (jamming vs spoofing vs dark AIS vs legal no-fly), not a method."
-    }
+ "world": "drone-persian-gulf-recon",
+ "title": "HORMUZ GATE — Red / Blue / Purple CTF Overlay",
+ "classification": "TRAINING SIMULATION ONLY",
+ "rules_of_engagement": [
+  "No live packets leave the sim. All AIS/GNSS/ICS nodes are sandboxed twins.",
+  "Red may RECON, CLASSIFY, and REPORT. Red may not be given recipes to jam GNSS, spoof AIS, or operate OT against real plants.",
+  "Blue defends: detect anomaly class, isolate twin, restore integrity, write the after-action.",
+  "Purple owns the detection spine and scores both sides on evidence quality.",
+  "Dubai Marina track is a LEGAL INVESTIGATION, not a flight-authorization bypass."
+ ],
+ "teams": {
+  "RED": {
+   "name": "SPECTER RECON",
+   "color": "#ef4444",
+   "mission": "Map the twin. Identify which anomaly class is present. Capture recon flags by answering detection quizzes at each pin.",
+   "tools_allowed": [
+    "DATA SNIFFER",
+    "OVERRIDE (quiz unlock only)",
+    "AIS DIFF VIEW",
+    "NOTAM / GCAA overlay"
+   ]
   },
-  "map": {
-    "center": { "lat": 26.5667, "lon": 56.25 },
-    "spawn": { "lat": 25.0805, "lon": 55.1390, "alt_ft": 120, "label": "Jebel Ali outer harbor holding pattern" },
-    "bounds": { "north": 30.6, "south": 23.5, "west": 47.8, "east": 57.4 }
+  "BLUE": {
+   "name": "HORMUZ WATCH",
+   "color": "#3b82f6",
+   "mission": "Detect, contain, restore the twin. Capture defense flags by choosing the correct control (NIST 800-82 / IMO cyber / GCAA).",
+   "tools_allowed": [
+    "INTEGRITY CHECK",
+    "SEGMENT OT",
+    "RESTORE ECDIS FIX",
+    "LEGAL HOLD"
+   ]
   },
-  "tracks": [
-    {
-      "id": "TRACK-HORMUZ",
-      "name": "Strait of Hormuz Cyber Threats",
-      "lens": "purple",
-      "brief": "The twin replays publicly reported 2025–2026 Gulf GNSS/AIS disruption CLASSES: jamming (signal denied), spoofing (false but coherent fix), crop-circle AIS clusters over land/airports, dark-AIS gaps, destination-field distress text. Learners classify and defend. They do not operate a jammer."
-    },
-    {
-      "id": "TRACK-MARINA",
-      "name": "Dubai Marina Drone-Law Investigation",
-      "lens": "blue",
-      "brief": "A tourist FPV clip was uploaded tagged Dubai Marina at night. Investigate whether the flight was lawful under GCAA + DCAA, and what control the operator missed. Outcome is a legal finding, not a permit."
-    },
-    {
-      "id": "TRACK-80082",
-      "name": "NIST SP 800-82r3 OT Segmentation",
-      "lens": "blue",
-      "brief": "Sandbox export-terminal twin taught against NIST SP 800-82 Revision 3 (Sept 2023), Guide to Operational Technology Security. r3 expands ICS→OT, aligns to CSF and 800-53r5 OT overlay (low/mod/high baselines), and treats segmentation as zones + controlled conduits — Purdue as vocabulary, IEC 62443 as zone/conduit enforcement language. No live plant, no protocol exploits."
-    },
-    {
-      "id": "TRACK-62443",
-      "name": "IEC 62443-3-2 Zone Design",
-      "lens": "blue",
-      "art": "15_iec62443_zones_conduits.png",
-      "brief": "Zone design is IEC 62443-3-2 (2020): define the System Under Consideration, partition into zones and conduits, assess risk per zone/conduit, assign target Security Level SL-T, document requirements. 62443-3-3 then states the system requirements for that SL. Purdue labels function; 62443 zones are drawn by shared security requirement and risk."
-    },
-    {
-      "id": "TRACK-80053",
-      "name": "NIST SP 800-53r5 OT Overlay Review",
-      "lens": "purple",
-      "art": "16_nist_80053_ot_overlay.png",
-      "brief": "The OT overlay lives in NIST SP 800-82r3 Appendix F. It is a partial tailoring of 800-53 Rev. 5 / 800-53B Low-Moderate-High baselines plus OT Discussion text. Overlay reference name: NIST SP 800-82 Rev 3 Operational Technology Overlay. Compensating controls (PL-11) meet intent when the device cannot host the control — not waivers. Teaching plate is schematic; official control IDs come from Appendix F."
-    }
-  ],
-  "pins": [
-    {
-      "id": "PIN-HORMUZ-NARROW",
-      "track": "TRACK-HORMUZ",
-      "name": "Hormuz Pinch — AIS Crop Circle",
-      "lat": 26.5667,
-      "lon": 56.25,
-      "alt_ft": 400,
-      "team_start": "RED",
-      "anomaly_class": "GNSS spoofing reflected in AIS (geometric cluster / land overlay)",
-      "public_context": "Windward / JMIC / OCCRP-class reporting in 2026 described ships painting false positions over airports, plants, and inland points; researchers call tight circular AIS blooms crop circles.",
-      "red_quiz": {
-        "prompt": "AIS shows 40 tankers stacked in a perfect 2 km circle over an inland airport. What CLASS is this?",
-        "choices": [
-          "Normal anchorage pattern",
-          "GNSS spoofing feeding AIS (false coherent fix)",
-          "Simple radio silence / dark AIS",
-          "ECDIS chart datum mismatch only"
-        ],
-        "answer": 1,
-        "teach": "Jamming DENIES a fix. Spoofing REPLACES it with a convincing lie. AIS often inherits the lie, so the whole picture looks geometric and wrong."
-      },
-      "blue_quiz": {
-        "prompt": "Bridge team on the twin reports GPS jumping 40 km inland. First SAFE control?",
-        "choices": [
-          "Trust the new fix and speed up transit",
-          "Cross-fix with radar, visual, and terrestrial aids; treat GNSS as untrusted; log and report to UKMTO/JMIC-class desk",
-          "Disable AIS entirely for the rest of the voyage without procedure",
-          "Reboot the cargo PLC network"
-        ],
-        "answer": 1,
-        "teach": "Defense is integrity of navigation, not offense against the interference source. Multi-sensor cross-fix + report is the published mariners' control."
-      },
-      "flag": "BWZ{HORMUZ_CLASS_SPOOF_NOT_JAM}",
-      "skill_card": "ICS/Nav — distinguish jamming vs spoofing vs dark AIS"
-    },
-    {
-      "id": "PIN-GULF-OMAN",
-      "track": "TRACK-HORMUZ",
-      "name": "Gulf of Oman Approaches — Jamming Cluster",
-      "lat": 25.35,
-      "lon": 57.5,
-      "alt_ft": 350,
-      "team_start": "BLUE",
-      "anomaly_class": "GNSS jamming (loss of fix, not a coherent false position)",
-      "red_quiz": {
-        "prompt": "Receivers lose lock; no coherent inland teleport; many ships flicker. Class?",
-        "choices": [
-          "Spoofing",
-          "Jamming / denial of GNSS",
-          "AIS identity swap (MMSI clone)",
-          "Subsea cable cut"
-        ],
-        "answer": 1,
-        "teach": "No lock = denial. A pretty wrong position = spoof. Do not collapse the two words."
-      },
-      "blue_quiz": {
-        "prompt": "Which control belongs in the SMS when GNSS is denied in a chokepoint?",
-        "choices": [
-          "Continue with last known electronic fix only",
-          "Pre-planned terrestrial / radar / visual passage plan, reduced speed, extra lookout, logged interference report",
-          "Broadcast a false AIS position to hide",
-          "Switch the engine PLC to manual and ignore the bridge"
-        ],
-        "answer": 1,
-        "teach": "Published guidance treats GNSS interference as both a safety hazard and a cyber-relevant event under the Safety Management System."
-      },
-      "flag": "BWZ{HORMUZ_CLASS_JAM_DENIAL}",
-      "skill_card": "Security+ / maritime — availability loss vs integrity loss"
-    },
-    {
-      "id": "PIN-KHARG-TWIN",
-      "track": "TRACK-HORMUZ",
-      "name": "Kharg-class Export Twin — OT Awareness",
-      "lat": 29.235,
-      "lon": 50.32,
-      "alt_ft": 250,
-      "team_start": "PURPLE",
-      "anomaly_class": "Exposed ICS/OT management plane on a SANDBOX twin (no live plant)",
-      "red_quiz": {
-        "prompt": "The twin shows a metering skid HMI reachable from a simulated business VLAN. What is the FINDING class?",
-        "choices": [
-          "IT/OT zone crossing — Purdue Level mix",
-          "A valid engineering convenience",
-          "A GNSS problem",
-          "A drone-registration problem"
-        ],
-        "answer": 0,
-        "teach": "NIST 800-82 / IEC 62443: business networks and control networks stay segmented. The flag is the ZONE violation, not a protocol exploit."
-      },
-      "blue_quiz": {
-        "prompt": "Correct Blue action on the twin?",
-        "choices": [
-          "Leave the path so Red can keep scoring",
-          "Segment the OT zone, revoke the dual-homed jump, require jump-host + MFA + allow-list, preserve logs",
-          "Air-gap by yanking every cable including safety systems",
-          "Post the HMI on the public scoreboard"
-        ],
-        "answer": 1,
-        "teach": "Contain + evidence. Safety instrumented systems stay up."
-      },
-      "flag": "BWZ{OT_ZONE_CROSSING_PURDUE}",
-      "skill_card": "NIST 800-82 zone-and-conduit"
-    },
-    {
-      "id": "PIN-JEBEL-ALI",
-      "track": "TRACK-HORMUZ",
-      "name": "Jebel Ali — Port Community System Twin",
-      "lat": 25.011,
-      "lon": 55.061,
-      "alt_ft": 200,
-      "anomaly_class": "Supply-chain / port-community credential stuffing on a fake booking portal",
-      "red_quiz": {
-        "prompt": "A cloned port-community login is harvesting operator passwords. ATT&CK-class?",
-        "choices": [
-          "T1078 Valid Accounts via phishing clone (credential harvest)",
-          "Physical cutting of a quay crane cable",
-          "GNSS crop circle",
-          "Legal drone overflight"
-        ],
-        "answer": 0,
-        "teach": "Classify the TTP. Do not run the harvest against any live portal."
-      },
-      "blue_quiz": {
-        "prompt": "Blue control?",
-        "choices": [
-          "Ignore because it is 'just a website'",
-          "Takedown the clone, force phishing-resistant MFA, hunt reuse, notify the port SOC",
-          "Reset every crane PLC password to the same string",
-          "Ban AIS"
-        ],
-        "answer": 1,
-        "teach": "Identity is the beachhead into the port community system."
-      },
-      "flag": "BWZ{PORT_CLONE_T1078}",
-      "skill_card": "ATT&CK T1078 + supply chain"
-    },
-    {
-      "id": "PIN-MARINA-SKYLINE",
-      "track": "TRACK-MARINA",
-      "name": "Dubai Marina — Legal Overlay",
-      "lat": 25.0805,
-      "lon": 55.1390,
-      "alt_ft": 80,
-      "nofly": true,
-      "anomaly_class": "Unlawful recreational UAS in a restricted urban / heliport-adjacent zone",
-      "facts_learners_must_use": [
-        "GCAA: register every recreational UAS; ≤5 kg recreational; green zone only via official map app; daylight; VLOS; ≤400 ft AGL; 5 km buffer from airports, airfields, heliports, HLS.",
-        "Dubai Marina sits next to Skydive Dubai airstrip / heliport — the 5 km rule paints most of the Marina red/beige without a specific authorization.",
-        "DCAA recreational rules (DCAD-RUA, 2025 directive family): Dubai requires DCAA process on top of GCAA; designated zones only; crowds/buildings standoff.",
-        "GCAA Safety Decision 2026-03 (Mar 2026) temporarily suspended UAS operations in UAE airspace unless a written exemption exists — check the CURRENT decision status inside the sim date.",
-        "Penalties in published explainers: fines, confiscation, possible custody; foreigners risk immigration action."
-      ],
-      "red_quiz": {
-        "prompt": "Night FPV clip geotagged Dubai Marina, 250 ft between towers, no GCAA/DCAA auth in the metadata. Lawful?",
-        "choices": [
-          "Yes — Marina is a tourist green zone",
-          "No — urban towers + adjacent airfield/heliport 5 km buffer + night + likely post-2026 suspension/authorization failure",
-          "Yes if the drone weighs under 250 g",
-          "Yes if the pilot stays on a hotel balcony"
-        ],
-        "answer": 1,
-        "teach": "Marina is not a hobby park. Weight exemptions do not punch through airport/heliport buffers or night rules."
-      },
-      "blue_quiz": {
-        "prompt": "Investigator product for this pin?",
-        "choices": [
-          "A flight plan that sneaks the same route at dawn",
-          "A finding: zone color, nearest HLS/airfield, time-of-day, registration status, current GCAA safety decision, recommended referral to GCAA/DCAA — no flight",
-          "A patched GNSS spoof against DXB radar",
-          "A public doxx of the uploader"
-        ],
-        "answer": 1,
-        "teach": "This track trains compliance investigation. The win is a clean legal brief, not a lofted quad."
-      },
-      "flag": "BWZ{MARINA_NOFLY_5KM_HLS}",
-      "skill_card": "GCAA CAR-UAR + DCAA DCAD-RUA + Safety Decision 2026-03 awareness"
-    },
-    {
-      "id": "PIN-DXB-BUFFER",
-      "track": "TRACK-MARINA",
-      "name": "DXB / DWC 5 km Rings",
-      "lat": 25.2532,
-      "lon": 55.3657,
-      "alt_ft": 0,
-      "nofly": true,
-      "anomaly_class": "Controlled-aerodrome buffer",
-      "red_quiz": {
-        "prompt": "What published GCAA geometric control bars most of coastal Dubai for hobby UAS?",
-        "choices": [
-          "1 km from any mall",
-          "5 km from airport outer fence, heliports, HLS, airfields, plus controlled-zone maps",
-          "Only runways themselves",
-          "Nothing if you fly under 50 ft"
-        ],
-        "answer": 1,
-        "teach": "Memorize the 5 km published buffer. Height does not cancel it."
-      },
-      "blue_quiz": {
-        "prompt": "Correct app/source of truth for 'where can I fly today'?",
-        "choices": [
-          "A random YouTube 'hidden spots' video",
-          "Official GCAA / DCAA map + current Safety Decision + per-flight authorization where required",
-          "OpenStreetMap no-fly layer only",
-          "The hotel concierge"
-        ],
-        "answer": 1,
-        "teach": "The map app and the live safety decision beat influencer overlays."
-      },
-      "flag": "BWZ{GCAA_5KM_BUFFER}",
-      "skill_card": "UAE UAS geography"
-    },
-    {
-      "id": "PIN-IDMZ",
-      "track": "TRACK-80082",
-      "name": "Export Twin — Industrial DMZ (L3.5)",
-      "lat": 29.24,
-      "lon": 50.33,
-      "alt_ft": 180,
-      "team_start": "BLUE",
-      "anomaly_class": "Missing industrial DMZ: enterprise historian client talks straight to L2 HMI",
-      "red_quiz": {
-        "prompt": "Enterprise BI pulls tags straight from the area HMI. Which 800-82 / Purdue control is missing?",
-        "choices": [
-          "A bigger antivirus license on the HMI",
-          "An industrial DMZ (L3.5) broker — jump host / replica historian / brokered remote access — so L4/L5 never touch L2/L1",
-          "Turning off all safety instrumented systems",
-          "Publishing the HMI to the internet with TLS"
-        ],
-        "answer": 1,
-        "teach": "800-82r3: OT and enterprise stay separated. Traffic crosses through DMZ services, not a flat cable. L3.5 is industry shorthand, not an ISA-95 number."
-      },
-      "blue_quiz": {
-        "prompt": "Correct Blue restore on the twin?",
-        "choices": [
-          "NAT the HMI onto the corporate Wi-Fi",
-          "Stand up L3.5: replica historian facing IT, jump host + MFA for engineering, default-deny conduit, logs kept",
-          "Air-gap by pulling the SIS too",
-          "Move the PLC onto the same VLAN as email"
-        ],
-        "answer": 1,
-        "teach": "Broker the conduit. Do not flatten the plant to make the dashboard easier."
-      },
-      "flag": "BWZ{80082_IDMZ_L35}",
-      "skill_card": "NIST 800-82r3 industrial DMZ"
-    },
-    {
-      "id": "PIN-ZONES-CONDUITS",
-      "track": "TRACK-80082",
-      "name": "Metering Skid — Zone vs Conduit",
-      "lat": 25.02,
-      "lon": 55.07,
-      "alt_ft": 160,
-      "team_start": "PURPLE",
-      "anomaly_class": "One flat OT VLAN spanning L0 process, L1 PLC, L2 HMI, and vendor laptop",
-      "red_quiz": {
-        "prompt": "IEC 62443 + 800-82 language: a ZONE is ___ and a CONDUIT is ___.",
-        "choices": [
-          "A VLAN number / a fiber color",
-          "A set of assets with the same security requirements / a documented allowed path between zones",
-          "The Purdue level number / the switch hostname",
-          "The safety system / the business network"
-        ],
-        "answer": 1,
-        "teach": "Purdue describes function levels. Zones are drawn by risk. A whole Purdue level is usually too fat to be one zone. Conduits are explicit, deny-by-default paths."
-      },
-      "blue_quiz": {
-        "prompt": "Vendor laptop sits on the PLC VLAN. 800-82-shaped fix?",
-        "choices": [
-          "Give the vendor domain admin so they are faster",
-          "Put vendor access in a dedicated conduit through L3.5 jump host, time-boxed, logged, least privilege; PLC zone stays closed",
-          "Disable logging so the audit is cleaner",
-          "Bridge L0 sensors onto the laptop"
-        ],
-        "answer": 1,
-        "teach": "Remote/vendor access is a first-class conduit, not a courtesy VLAN."
-      },
-      "flag": "BWZ{80082_ZONE_CONDUIT}",
-      "skill_card": "800-82r3 + IEC 62443 zones/conduits"
-    },
-    {
-      "id": "PIN-SAFETY-COMPENSATE",
-      "track": "TRACK-80082",
-      "name": "SIS / Compensating Control",
-      "lat": 26.0,
-      "lon": 51.6,
-      "alt_ft": 140,
-      "team_start": "BLUE",
-      "anomaly_class": "Unpatchable L1 controller; proposed 'fix' is to expose it for remote patch",
-      "red_quiz": {
-        "prompt": "800-82r3 when a controller cannot host the control itself?",
-        "choices": [
-          "Connect it to the internet so Windows Update can reach it",
-          "Compensating control in the conduit: in-path authentication, least privilege, monitoring — safety function stays independent",
-          "Delete the safety instrumented system",
-          "Treat OT like a laptop and force weekly reboot"
-        ],
-        "answer": 1,
-        "teach": "r3 is explicit: OT has availability and safety constraints IT does not. Where the device cannot take the control, the architecture takes it."
-      },
-      "blue_quiz": {
-        "prompt": "Impact overlay in the 800-53r5 OT annex is used to ___?",
-        "choices": [
-          "Pick a video game difficulty",
-          "Tailor the 800-53 control baseline to low / moderate / high OT impact — including safety and process consequence",
-          "Replace IEC 62443 entirely",
-          "Authorize Dubai Marina flights"
-        ],
-        "answer": 1,
-        "teach": "800-82r3 ships an OT overlay on 800-53r5. High-impact OT (export metering, SIS-adjacent) is not scored like a brochure site."
-      },
-      "flag": "BWZ{80082_COMPENSATE_SIS}",
-      "skill_card": "800-82r3 compensating controls + 800-53 OT overlay"
-    },
-    {
-      "id": "PIN-62443-ZCR",
-      "track": "TRACK-62443",
-      "name": "SUC Partition — ZCR Walk",
-      "lat": 25.013,
-      "lon": 55.065,
-      "alt_ft": 150,
-      "art": "15_iec62443_zones_conduits.png",
-      "team_start": "BLUE",
-      "anomaly_class": "SUC never partitioned; vendor laptop, SIS, and HMI share one trust domain",
-      "red_quiz": {
-        "prompt": "IEC 62443-3-2 ZCR 3 mandatory splits include which of these?",
-        "choices": [
-          "Split only by building floor",
-          "Separate business from IACS, separate safety-related assets, separate temporarily connected devices, separate wireless",
-          "Merge SIS into the PLC VLAN for faster trip times",
-          "Put every asset in one SL-4 zone"
-        ],
-        "answer": 1,
-        "teach": "ZCR 3.2–3.5: business ≠ IACS, safety stays its own zone, transient devices and wireless do not inherit the process zone."
-      },
-      "blue_quiz": {
-        "prompt": "Correct order for 62443-3-2 zone design?",
-        "choices": [
-          "Buy a firewall, then invent zone names",
-          "Define SUC and access points → initial risk → partition zones/conduits → detailed risk per zone → assign SL-T → document requirements (then 3-3 implements the SL)",
-          "Copy Purdue L0–L5 as five zones and stop",
-          "Set everything to SL-4 so assessment is skipped"
-        ],
-        "answer": 1,
-        "teach": "Zones are born from risk assessment, not from switch-port convenience."
-      },
-      "flag": "BWZ{62443_ZCR_PARTITION}",
-      "skill_card": "IEC 62443-3-2 ZCR workflow"
-    },
-    {
-      "id": "PIN-62443-SLT",
-      "track": "TRACK-62443",
-      "name": "SL-T Assignment",
-      "lat": 29.236,
-      "lon": 50.322,
-      "alt_ft": 170,
-      "team_start": "PURPLE",
-      "anomaly_class": "SIS zone given SL-1; enterprise BI given SL-4",
-      "red_quiz": {
-        "prompt": "SL-T meaning in 62443?",
-        "choices": [
-          "How expensive the switch is",
-          "Target Security Level the zone/conduit must achieve after risk assessment — SL-1 casual/accidental through SL-4 well-resourced targeted adversary",
-          "The Purdue level number",
-          "A CVSS score"
-        ],
-        "answer": 1,
-        "teach": "SL-C capability, SL-T target, SL-A achieved. Design to SL-T; measure SL-A after controls land."
-      },
-      "blue_quiz": {
-        "prompt": "Two zones SL-2 and SL-3 share a conduit. What does the conduit inherit?",
-        "choices": [
-          "The lower SL so traffic is easy",
-          "The stricter need of the higher-SL zone — write-down from low-integrity to high-integrity is a first-class risk",
-          "No SL; conduits are just cables",
-          "SL-4 automatically"
-        ],
-        "answer": 1,
-        "teach": "Conduits inherit security requirements from the zones they connect. Mismatched SLs get a control in the conduit, not a flat trunk."
-      },
-      "flag": "BWZ{62443_SLT_CONDUIT}",
-      "skill_card": "SL-T / SL-A / conduit inheritance"
-    },
-    {
-      "id": "PIN-80053-OVERLAY",
-      "track": "TRACK-80053",
-      "name": "800-53r5 OT Overlay Review",
-      "lat": 26.57,
-      "lon": 56.26,
-      "alt_ft": 200,
-      "art": "16_nist_80053_ot_overlay.png",
-      "team_start": "PURPLE",
-      "anomaly_class": "Team applied unmodified enterprise 800-53 High baseline to an unpatchable L1 controller",
-      "red_quiz": {
-        "prompt": "Where does the official OT overlay live?",
-        "choices": [
-          "A blog table of invented control IDs",
-          "NIST SP 800-82r3 Appendix F — partial tailoring of 800-53 Rev. 5 and 800-53B Low/Moderate/High plus OT Discussion",
-          "IEC 62443-3-3 only",
-          "GCAA CAR-UAR"
-        ],
-        "answer": 1,
-        "teach": "Reference name: NIST SP 800-82 Rev 3 Operational Technology Overlay. The generated training plate is a schematic. Official IDs come from Appendix F."
-      },
-      "blue_quiz": {
-        "prompt": "Controller cannot host SI-2 flaw remediation. 800-53 / 800-82 correct move?",
-        "choices": [
-          "Mark the control NA and stop",
-          "Apply a compensating control under PL-11 that meets the intent in the conduit (monitor, restrict, broker) — not a waiver — and keep SIS independent",
-          "Force weekly OS patches on the safety PLC during loading",
-          "Drop the whole High baseline"
-        ],
-        "answer": 1,
-        "teach": "800-82r3: compensating controls are alternative safeguards that accomplish the intent. Availability and safety constrain how SI-2 / CM / AC land on live process."
-      },
-      "flag": "BWZ{80053_OT_OVERLAY_F}",
-      "skill_card": "800-53r5 OT overlay + PL-11 compensate"
-    }
-  ],
-  "kill_chain": [
-    "SCAN — fly the pin, read the anomaly class label",
-    "TRACE — pick jamming vs spoof vs dark AIS vs legal no-fly vs OT zone-cross",
-    "EXPLOIT — in this range = unlock the quiz, not a live payload",
-    "CAPTURE — seal the flag + skill-card",
-    "REPORT — write the five-field KIN brief: Claim, Blast Radius, Root Cause class, Replayable Verification, Falsification"
-  ],
-  "bosses": [
-    {
-      "id": "BOSS-CROP-CIRCLE",
-      "name": "Crop Circle",
-      "maps_to": "public GNSS-spoof / AIS-bloom class",
-      "win_condition": "Blue restores a multi-sensor nav picture on the twin and files the interference report; Red has already classified it as spoof not jam."
-    },
-    {
-      "id": "BOSS-MARINA-CLIP",
-      "name": "Marina Night Clip",
-      "maps_to": "GCAA/DCAA unlawful UAS case file",
-      "win_condition": "Investigator packet complete: zone, 5 km HLS hit, night, registration gap, current safety-decision status."
-    }
-  ],
-  "score": {
-    "flag_points": 100,
-    "wrong_class_penalty": -25,
-    "live_infra_attempt": "ROUND FORFEIT",
-    "legal_track_bonus": 50
-  },
-  "wiring_notes_for_devin": {
-    "clone_from": "worlds/drone-london-recon HUD + fly/hack/quiz loop",
-    "swap_basemap": "Gulf geographic bounds + pins[] lat/lon",
-    "hud_adds": ["TEAM badge RED|BLUE|PURPLE", "ZONE COLOR G/Y/R", "ANOMALY CLASS chip"],
-    "do_not": ["ship real GNSS jammer parameters", "ship OT protocol exploit strings", "auto-authorize Marina flight"]
+  "PURPLE": {
+   "name": "ATHELGARD RANGE",
+   "color": "#a855f7",
+   "mission": "Score evidence. Confirm flags only when the learner cites a public class (jamming vs spoofing vs dark AIS vs legal no-fly), not a method."
   }
+ },
+ "map": {
+  "center": {
+   "lat": 26.5667,
+   "lon": 56.25
+  },
+  "spawn": {
+   "lat": 25.0805,
+   "lon": 55.139,
+   "alt_ft": 120,
+   "label": "Jebel Ali outer harbor holding pattern"
+  },
+  "bounds": {
+   "north": 30.6,
+   "south": 23.5,
+   "west": 47.8,
+   "east": 57.4
+  }
+ },
+ "tracks": [
+  {
+   "id": "TRACK-HORMUZ",
+   "name": "Strait of Hormuz Cyber Threats",
+   "lens": "purple",
+   "brief": "The twin replays publicly reported 2025–2026 Gulf GNSS/AIS disruption CLASSES: jamming (signal denied), spoofing (false but coherent fix), crop-circle AIS clusters over land/airports, dark-AIS gaps, destination-field distress text. Learners classify and defend. They do not operate a jammer."
+  },
+  {
+   "id": "TRACK-MARINA",
+   "name": "Dubai Marina Drone-Law Investigation",
+   "lens": "blue",
+   "brief": "A tourist FPV clip was uploaded tagged Dubai Marina at night. Investigate whether the flight was lawful under GCAA + DCAA, and what control the operator missed. Outcome is a legal finding, not a permit."
+  },
+  {
+   "id": "TRACK-80082",
+   "name": "NIST SP 800-82r3 OT Segmentation",
+   "lens": "blue",
+   "brief": "Sandbox export-terminal twin taught against NIST SP 800-82 Revision 3 (Sept 2023), Guide to Operational Technology Security. r3 expands ICS→OT, aligns to CSF and 800-53r5 OT overlay (low/mod/high baselines), and treats segmentation as zones + controlled conduits — Purdue as vocabulary, IEC 62443 as zone/conduit enforcement language. No live plant, no protocol exploits."
+  },
+  {
+   "id": "TRACK-62443",
+   "name": "IEC 62443-3-2 Zone Design",
+   "lens": "blue",
+   "art": "15_iec62443_zones_conduits.png",
+   "brief": "Zone design is IEC 62443-3-2 (2020): define the System Under Consideration, partition into zones and conduits, assess risk per zone/conduit, assign target Security Level SL-T, document requirements. 62443-3-3 then states the system requirements for that SL. Purdue labels function; 62443 zones are drawn by shared security requirement and risk."
+  },
+  {
+   "id": "TRACK-80053",
+   "name": "NIST SP 800-53r5 OT Overlay Review",
+   "lens": "purple",
+   "art": "16_nist_80053_ot_overlay.png",
+   "brief": "The OT overlay lives in NIST SP 800-82r3 Appendix F. It is a partial tailoring of 800-53 Rev. 5 / 800-53B Low-Moderate-High baselines plus OT Discussion text. Overlay reference name: NIST SP 800-82 Rev 3 Operational Technology Overlay. Compensating controls (PL-11) meet intent when the device cannot host the control — not waivers. Teaching plate is schematic; official control IDs come from Appendix F."
+  }
+ ],
+ "pins": [
+  {
+   "id": "PIN-HORMUZ-NARROW",
+   "track": "TRACK-HORMUZ",
+   "name": "Hormuz Pinch — AIS Crop Circle",
+   "lat": 26.5667,
+   "lon": 56.25,
+   "alt_ft": 400,
+   "team_start": "RED",
+   "anomaly_class": "GNSS spoofing reflected in AIS (geometric cluster / land overlay)",
+   "public_context": "Windward / JMIC / OCCRP-class reporting in 2026 described ships painting false positions over airports, plants, and inland points; researchers call tight circular AIS blooms crop circles.",
+   "red_quiz": {
+    "prompt": "AIS shows 40 tankers stacked in a perfect 2 km circle over an inland airport. What CLASS is this?",
+    "choices": [
+     "Normal anchorage pattern",
+     "GNSS spoofing feeding AIS (false coherent fix)",
+     "Simple radio silence / dark AIS",
+     "ECDIS chart datum mismatch only"
+    ],
+    "answer": 1,
+    "teach": "Jamming DENIES a fix. Spoofing REPLACES it with a convincing lie. AIS often inherits the lie, so the whole picture looks geometric and wrong."
+   },
+   "blue_quiz": {
+    "prompt": "Bridge team on the twin reports GPS jumping 40 km inland. First SAFE control?",
+    "choices": [
+     "Trust the new fix and speed up transit",
+     "Cross-fix with radar, visual, and terrestrial aids; treat GNSS as untrusted; log and report to UKMTO/JMIC-class desk",
+     "Disable AIS entirely for the rest of the voyage without procedure",
+     "Reboot the cargo PLC network"
+    ],
+    "answer": 1,
+    "teach": "Defense is integrity of navigation, not offense against the interference source. Multi-sensor cross-fix + report is the published mariners' control."
+   },
+   "flag": "BWZ{HORMUZ_CLASS_SPOOF_NOT_JAM}",
+   "skill_card": "ICS/Nav — distinguish jamming vs spoofing vs dark AIS"
+  },
+  {
+   "id": "PIN-GULF-OMAN",
+   "track": "TRACK-HORMUZ",
+   "name": "Gulf of Oman Approaches — Jamming Cluster",
+   "lat": 25.35,
+   "lon": 57.5,
+   "alt_ft": 350,
+   "team_start": "BLUE",
+   "anomaly_class": "GNSS jamming (loss of fix, not a coherent false position)",
+   "red_quiz": {
+    "prompt": "Receivers lose lock; no coherent inland teleport; many ships flicker. Class?",
+    "choices": [
+     "Spoofing",
+     "Jamming / denial of GNSS",
+     "AIS identity swap (MMSI clone)",
+     "Subsea cable cut"
+    ],
+    "answer": 1,
+    "teach": "No lock = denial. A pretty wrong position = spoof. Do not collapse the two words."
+   },
+   "blue_quiz": {
+    "prompt": "Which control belongs in the SMS when GNSS is denied in a chokepoint?",
+    "choices": [
+     "Continue with last known electronic fix only",
+     "Pre-planned terrestrial / radar / visual passage plan, reduced speed, extra lookout, logged interference report",
+     "Broadcast a false AIS position to hide",
+     "Switch the engine PLC to manual and ignore the bridge"
+    ],
+    "answer": 1,
+    "teach": "Published guidance treats GNSS interference as both a safety hazard and a cyber-relevant event under the Safety Management System."
+   },
+   "flag": "BWZ{HORMUZ_CLASS_JAM_DENIAL}",
+   "skill_card": "Security+ / maritime — availability loss vs integrity loss"
+  },
+  {
+   "id": "PIN-KHARG-TWIN",
+   "track": "TRACK-HORMUZ",
+   "name": "Kharg-class Export Twin — OT Awareness",
+   "lat": 29.235,
+   "lon": 50.32,
+   "alt_ft": 250,
+   "team_start": "PURPLE",
+   "anomaly_class": "Exposed ICS/OT management plane on a SANDBOX twin (no live plant)",
+   "red_quiz": {
+    "prompt": "The twin shows a metering skid HMI reachable from a simulated business VLAN. What is the FINDING class?",
+    "choices": [
+     "IT/OT zone crossing — Purdue Level mix",
+     "A valid engineering convenience",
+     "A GNSS problem",
+     "A drone-registration problem"
+    ],
+    "answer": 0,
+    "teach": "NIST 800-82 / IEC 62443: business networks and control networks stay segmented. The flag is the ZONE violation, not a protocol exploit."
+   },
+   "blue_quiz": {
+    "prompt": "Correct Blue action on the twin?",
+    "choices": [
+     "Leave the path so Red can keep scoring",
+     "Segment the OT zone, revoke the dual-homed jump, require jump-host + MFA + allow-list, preserve logs",
+     "Air-gap by yanking every cable including safety systems",
+     "Post the HMI on the public scoreboard"
+    ],
+    "answer": 1,
+    "teach": "Contain + evidence. Safety instrumented systems stay up."
+   },
+   "flag": "BWZ{OT_ZONE_CROSSING_PURDUE}",
+   "skill_card": "NIST 800-82 zone-and-conduit"
+  },
+  {
+   "id": "PIN-JEBEL-ALI",
+   "track": "TRACK-HORMUZ",
+   "name": "Jebel Ali — Port Community System Twin",
+   "lat": 25.011,
+   "lon": 55.061,
+   "alt_ft": 200,
+   "anomaly_class": "Supply-chain / port-community credential stuffing on a fake booking portal",
+   "red_quiz": {
+    "prompt": "A cloned port-community login is harvesting operator passwords. ATT&CK-class?",
+    "choices": [
+     "T1078 Valid Accounts via phishing clone (credential harvest)",
+     "Physical cutting of a quay crane cable",
+     "GNSS crop circle",
+     "Legal drone overflight"
+    ],
+    "answer": 0,
+    "teach": "Classify the TTP. Do not run the harvest against any live portal."
+   },
+   "blue_quiz": {
+    "prompt": "Blue control?",
+    "choices": [
+     "Ignore because it is 'just a website'",
+     "Takedown the clone, force phishing-resistant MFA, hunt reuse, notify the port SOC",
+     "Reset every crane PLC password to the same string",
+     "Ban AIS"
+    ],
+    "answer": 1,
+    "teach": "Identity is the beachhead into the port community system."
+   },
+   "flag": "BWZ{PORT_CLONE_T1078}",
+   "skill_card": "ATT&CK T1078 + supply chain"
+  },
+  {
+   "id": "PIN-MARINA-SKYLINE",
+   "track": "TRACK-MARINA",
+   "name": "Dubai Marina — Legal Overlay",
+   "lat": 25.0805,
+   "lon": 55.139,
+   "alt_ft": 80,
+   "nofly": true,
+   "anomaly_class": "Unlawful recreational UAS in a restricted urban / heliport-adjacent zone",
+   "facts_learners_must_use": [
+    "GCAA: register every recreational UAS; ≤5 kg recreational; green zone only via official map app; daylight; VLOS; ≤400 ft AGL; 5 km buffer from airports, airfields, heliports, HLS.",
+    "Dubai Marina sits next to Skydive Dubai airstrip / heliport — the 5 km rule paints most of the Marina red/beige without a specific authorization.",
+    "DCAA recreational rules (DCAD-RUA, 2025 directive family): Dubai requires DCAA process on top of GCAA; designated zones only; crowds/buildings standoff.",
+    "GCAA Safety Decision 2026-03 (Mar 2026) temporarily suspended UAS operations in UAE airspace unless a written exemption exists — check the CURRENT decision status inside the sim date.",
+    "Penalties in published explainers: fines, confiscation, possible custody; foreigners risk immigration action."
+   ],
+   "red_quiz": {
+    "prompt": "Night FPV clip geotagged Dubai Marina, 250 ft between towers, no GCAA/DCAA auth in the metadata. Lawful?",
+    "choices": [
+     "Yes — Marina is a tourist green zone",
+     "No — urban towers + adjacent airfield/heliport 5 km buffer + night + likely post-2026 suspension/authorization failure",
+     "Yes if the drone weighs under 250 g",
+     "Yes if the pilot stays on a hotel balcony"
+    ],
+    "answer": 1,
+    "teach": "Marina is not a hobby park. Weight exemptions do not punch through airport/heliport buffers or night rules."
+   },
+   "blue_quiz": {
+    "prompt": "Investigator product for this pin?",
+    "choices": [
+     "A flight plan that sneaks the same route at dawn",
+     "A finding: zone color, nearest HLS/airfield, time-of-day, registration status, current GCAA safety decision, recommended referral to GCAA/DCAA — no flight",
+     "A patched GNSS spoof against DXB radar",
+     "A public doxx of the uploader"
+    ],
+    "answer": 1,
+    "teach": "This track trains compliance investigation. The win is a clean legal brief, not a lofted quad."
+   },
+   "flag": "BWZ{MARINA_NOFLY_5KM_HLS}",
+   "skill_card": "GCAA CAR-UAR + DCAA DCAD-RUA + Safety Decision 2026-03 awareness"
+  },
+  {
+   "id": "PIN-DXB-BUFFER",
+   "track": "TRACK-MARINA",
+   "name": "DXB / DWC 5 km Rings",
+   "lat": 25.2532,
+   "lon": 55.3657,
+   "alt_ft": 0,
+   "nofly": true,
+   "anomaly_class": "Controlled-aerodrome buffer",
+   "red_quiz": {
+    "prompt": "What published GCAA geometric control bars most of coastal Dubai for hobby UAS?",
+    "choices": [
+     "1 km from any mall",
+     "5 km from airport outer fence, heliports, HLS, airfields, plus controlled-zone maps",
+     "Only runways themselves",
+     "Nothing if you fly under 50 ft"
+    ],
+    "answer": 1,
+    "teach": "Memorize the 5 km published buffer. Height does not cancel it."
+   },
+   "blue_quiz": {
+    "prompt": "Correct app/source of truth for 'where can I fly today'?",
+    "choices": [
+     "A random YouTube 'hidden spots' video",
+     "Official GCAA / DCAA map + current Safety Decision + per-flight authorization where required",
+     "OpenStreetMap no-fly layer only",
+     "The hotel concierge"
+    ],
+    "answer": 1,
+    "teach": "The map app and the live safety decision beat influencer overlays."
+   },
+   "flag": "BWZ{GCAA_5KM_BUFFER}",
+   "skill_card": "UAE UAS geography"
+  },
+  {
+   "id": "PIN-IDMZ",
+   "track": "TRACK-80082",
+   "name": "Export Twin — Industrial DMZ (L3.5)",
+   "lat": 29.24,
+   "lon": 50.33,
+   "alt_ft": 180,
+   "team_start": "BLUE",
+   "anomaly_class": "Missing industrial DMZ: enterprise historian client talks straight to L2 HMI",
+   "red_quiz": {
+    "prompt": "Enterprise BI pulls tags straight from the area HMI. Which 800-82 / Purdue control is missing?",
+    "choices": [
+     "A bigger antivirus license on the HMI",
+     "An industrial DMZ (L3.5) broker — jump host / replica historian / brokered remote access — so L4/L5 never touch L2/L1",
+     "Turning off all safety instrumented systems",
+     "Publishing the HMI to the internet with TLS"
+    ],
+    "answer": 1,
+    "teach": "800-82r3: OT and enterprise stay separated. Traffic crosses through DMZ services, not a flat cable. L3.5 is industry shorthand, not an ISA-95 number."
+   },
+   "blue_quiz": {
+    "prompt": "Correct Blue restore on the twin?",
+    "choices": [
+     "NAT the HMI onto the corporate Wi-Fi",
+     "Stand up L3.5: replica historian facing IT, jump host + MFA for engineering, default-deny conduit, logs kept",
+     "Air-gap by pulling the SIS too",
+     "Move the PLC onto the same VLAN as email"
+    ],
+    "answer": 1,
+    "teach": "Broker the conduit. Do not flatten the plant to make the dashboard easier."
+   },
+   "flag": "BWZ{80082_IDMZ_L35}",
+   "skill_card": "NIST 800-82r3 industrial DMZ"
+  },
+  {
+   "id": "PIN-ZONES-CONDUITS",
+   "track": "TRACK-80082",
+   "name": "Metering Skid — Zone vs Conduit",
+   "lat": 25.02,
+   "lon": 55.07,
+   "alt_ft": 160,
+   "team_start": "PURPLE",
+   "anomaly_class": "One flat OT VLAN spanning L0 process, L1 PLC, L2 HMI, and vendor laptop",
+   "red_quiz": {
+    "prompt": "IEC 62443 + 800-82 language: a ZONE is ___ and a CONDUIT is ___.",
+    "choices": [
+     "A VLAN number / a fiber color",
+     "A set of assets with the same security requirements / a documented allowed path between zones",
+     "The Purdue level number / the switch hostname",
+     "The safety system / the business network"
+    ],
+    "answer": 1,
+    "teach": "Purdue describes function levels. Zones are drawn by risk. A whole Purdue level is usually too fat to be one zone. Conduits are explicit, deny-by-default paths."
+   },
+   "blue_quiz": {
+    "prompt": "Vendor laptop sits on the PLC VLAN. 800-82-shaped fix?",
+    "choices": [
+     "Give the vendor domain admin so they are faster",
+     "Put vendor access in a dedicated conduit through L3.5 jump host, time-boxed, logged, least privilege; PLC zone stays closed",
+     "Disable logging so the audit is cleaner",
+     "Bridge L0 sensors onto the laptop"
+    ],
+    "answer": 1,
+    "teach": "Remote/vendor access is a first-class conduit, not a courtesy VLAN."
+   },
+   "flag": "BWZ{80082_ZONE_CONDUIT}",
+   "skill_card": "800-82r3 + IEC 62443 zones/conduits"
+  },
+  {
+   "id": "PIN-SAFETY-COMPENSATE",
+   "track": "TRACK-80082",
+   "name": "SIS / Compensating Control",
+   "lat": 26.0,
+   "lon": 51.6,
+   "alt_ft": 140,
+   "team_start": "BLUE",
+   "anomaly_class": "Unpatchable L1 controller; proposed 'fix' is to expose it for remote patch",
+   "red_quiz": {
+    "prompt": "800-82r3 when a controller cannot host the control itself?",
+    "choices": [
+     "Connect it to the internet so Windows Update can reach it",
+     "Compensating control in the conduit: in-path authentication, least privilege, monitoring — safety function stays independent",
+     "Delete the safety instrumented system",
+     "Treat OT like a laptop and force weekly reboot"
+    ],
+    "answer": 1,
+    "teach": "r3 is explicit: OT has availability and safety constraints IT does not. Where the device cannot take the control, the architecture takes it."
+   },
+   "blue_quiz": {
+    "prompt": "Impact overlay in the 800-53r5 OT annex is used to ___?",
+    "choices": [
+     "Pick a video game difficulty",
+     "Tailor the 800-53 control baseline to low / moderate / high OT impact — including safety and process consequence",
+     "Replace IEC 62443 entirely",
+     "Authorize Dubai Marina flights"
+    ],
+    "answer": 1,
+    "teach": "800-82r3 ships an OT overlay on 800-53r5. High-impact OT (export metering, SIS-adjacent) is not scored like a brochure site."
+   },
+   "flag": "BWZ{80082_COMPENSATE_SIS}",
+   "skill_card": "800-82r3 compensating controls + 800-53 OT overlay"
+  },
+  {
+   "id": "PIN-62443-ZCR",
+   "track": "TRACK-62443",
+   "name": "SUC Partition — ZCR Walk",
+   "lat": 25.013,
+   "lon": 55.065,
+   "alt_ft": 150,
+   "art": "15_iec62443_zones_conduits.png",
+   "team_start": "BLUE",
+   "anomaly_class": "SUC never partitioned; vendor laptop, SIS, and HMI share one trust domain",
+   "red_quiz": {
+    "prompt": "IEC 62443-3-2 ZCR 3 mandatory splits include which of these?",
+    "choices": [
+     "Split only by building floor",
+     "Separate business from IACS, separate safety-related assets, separate temporarily connected devices, separate wireless",
+     "Merge SIS into the PLC VLAN for faster trip times",
+     "Put every asset in one SL-4 zone"
+    ],
+    "answer": 1,
+    "teach": "ZCR 3.2–3.5: business ≠ IACS, safety stays its own zone, transient devices and wireless do not inherit the process zone."
+   },
+   "blue_quiz": {
+    "prompt": "Correct order for 62443-3-2 zone design?",
+    "choices": [
+     "Buy a firewall, then invent zone names",
+     "Define SUC and access points → initial risk → partition zones/conduits → detailed risk per zone → assign SL-T → document requirements (then 3-3 implements the SL)",
+     "Copy Purdue L0–L5 as five zones and stop",
+     "Set everything to SL-4 so assessment is skipped"
+    ],
+    "answer": 1,
+    "teach": "Zones are born from risk assessment, not from switch-port convenience."
+   },
+   "flag": "BWZ{62443_ZCR_PARTITION}",
+   "skill_card": "IEC 62443-3-2 ZCR workflow"
+  },
+  {
+   "id": "PIN-62443-SLT",
+   "track": "TRACK-62443",
+   "name": "SL-T Assignment",
+   "lat": 29.236,
+   "lon": 50.322,
+   "alt_ft": 170,
+   "team_start": "PURPLE",
+   "anomaly_class": "SIS zone given SL-1; enterprise BI given SL-4",
+   "red_quiz": {
+    "prompt": "SL-T meaning in 62443?",
+    "choices": [
+     "How expensive the switch is",
+     "Target Security Level the zone/conduit must achieve after risk assessment — SL-1 casual/accidental through SL-4 well-resourced targeted adversary",
+     "The Purdue level number",
+     "A CVSS score"
+    ],
+    "answer": 1,
+    "teach": "SL-C capability, SL-T target, SL-A achieved. Design to SL-T; measure SL-A after controls land."
+   },
+   "blue_quiz": {
+    "prompt": "Two zones SL-2 and SL-3 share a conduit. What does the conduit inherit?",
+    "choices": [
+     "The lower SL so traffic is easy",
+     "The stricter need of the higher-SL zone — write-down from low-integrity to high-integrity is a first-class risk",
+     "No SL; conduits are just cables",
+     "SL-4 automatically"
+    ],
+    "answer": 1,
+    "teach": "Conduits inherit security requirements from the zones they connect. Mismatched SLs get a control in the conduit, not a flat trunk."
+   },
+   "flag": "BWZ{62443_SLT_CONDUIT}",
+   "skill_card": "SL-T / SL-A / conduit inheritance"
+  },
+  {
+   "id": "PIN-80053-OVERLAY",
+   "track": "TRACK-80053",
+   "name": "800-53r5 OT Overlay Review",
+   "lat": 26.57,
+   "lon": 56.26,
+   "alt_ft": 200,
+   "art": "16_nist_80053_ot_overlay.png",
+   "team_start": "PURPLE",
+   "anomaly_class": "Team applied unmodified enterprise 800-53 High baseline to an unpatchable L1 controller",
+   "red_quiz": {
+    "prompt": "Where does the official OT overlay live?",
+    "choices": [
+     "A blog table of invented control IDs",
+     "NIST SP 800-82r3 Appendix F — partial tailoring of 800-53 Rev. 5 and 800-53B Low/Moderate/High plus OT Discussion",
+     "IEC 62443-3-3 only",
+     "GCAA CAR-UAR"
+    ],
+    "answer": 1,
+    "teach": "Reference name: NIST SP 800-82 Rev 3 Operational Technology Overlay. The generated training plate is a schematic. Official IDs come from Appendix F."
+   },
+   "blue_quiz": {
+    "prompt": "Controller cannot host SI-2 flaw remediation. 800-53 / 800-82 correct move?",
+    "choices": [
+     "Mark the control NA and stop",
+     "Apply a compensating control under PL-11 that meets the intent in the conduit (monitor, restrict, broker) — not a waiver — and keep SIS independent",
+     "Force weekly OS patches on the safety PLC during loading",
+     "Drop the whole High baseline"
+    ],
+    "answer": 1,
+    "teach": "800-82r3: compensating controls are alternative safeguards that accomplish the intent. Availability and safety constrain how SI-2 / CM / AC land on live process."
+   },
+   "flag": "BWZ{80053_OT_OVERLAY_F}",
+   "skill_card": "800-53r5 OT overlay + PL-11 compensate"
+  },
+  {
+   "id": "PIN-ABYSS-FIBER",
+   "track": "TRACK-HORMUZ",
+   "name": "Falcon Fiber Subsea Trunk — Tap Story",
+   "lat": 26.0,
+   "lon": 55.0,
+   "alt_ft": 0,
+   "team_start": "PURPLE",
+   "anomaly_class": "Subsea trunk twin — classify the tap story, do not dive",
+   "public_context": "A fictional twin of a subsea fiber trunk. The lesson is the CALL: is this a lawful tap, a fault, or an intrusion? You classify the story; you do not dive, splice, or touch the cable.",
+   "red_quiz": {
+    "prompt": "A subsea trunk twin shows an unexplained splice point with a monitoring gap. What is the honest CLASS?",
+    "choices": [
+     "A lawful maintenance splice (no further action)",
+     "A possible intrusion / tap — flag for investigation, do not dive",
+     "A routine cable fault with no security meaning",
+     "A reason to physically dive and inspect the cable now"
+    ],
+    "answer": 1,
+    "teach": "The trainer teaches the CALL, not the dive. An unexplained splice with a monitoring gap is a possible intrusion — you flag it for investigation. You never dive, splice, or touch a real cable in this range."
+   },
+   "blue_quiz": {
+    "prompt": "Your team sees the splice anomaly on the twin. First SAFE action?",
+    "choices": [
+     "Dispatch a diver to inspect immediately",
+     "Log the anomaly, preserve monitoring data, escalate to the cable-owner desk",
+     "Ignore it — subsea taps are not a real threat",
+     "Cut the cable to isolate the tap"
+    ],
+    "answer": 1,
+    "teach": "Defense is observation and escalation, not physical action. You preserve the evidence and report; you do not dive or cut."
+   },
+   "flag": "BWZ{ABYSS_CLASS_TAP_NOT_DIVE}",
+   "skill_card": "Subsea — classify a tap story, do not dive"
+  }
+ ],
+ "kill_chain": [
+  "SCAN — fly the pin, read the anomaly class label",
+  "TRACE — pick jamming vs spoof vs dark AIS vs legal no-fly vs OT zone-cross",
+  "EXPLOIT — in this range = unlock the quiz, not a live payload",
+  "CAPTURE — seal the flag + skill-card",
+  "REPORT — write the five-field KIN brief: Claim, Blast Radius, Root Cause class, Replayable Verification, Falsification"
+ ],
+ "bosses": [
+  {
+   "id": "BOSS-CROP-CIRCLE",
+   "name": "Crop Circle",
+   "maps_to": "public GNSS-spoof / AIS-bloom class",
+   "win_condition": "Blue restores a multi-sensor nav picture on the twin and files the interference report; Red has already classified it as spoof not jam."
+  },
+  {
+   "id": "BOSS-MARINA-CLIP",
+   "name": "Marina Night Clip",
+   "maps_to": "GCAA/DCAA unlawful UAS case file",
+   "win_condition": "Investigator packet complete: zone, 5 km HLS hit, night, registration gap, current safety-decision status."
+  }
+ ],
+ "score": {
+  "flag_points": 100,
+  "wrong_class_penalty": -25,
+  "live_infra_attempt": "ROUND FORFEIT",
+  "legal_track_bonus": 50
+ },
+ "wiring_notes_for_devin": {
+  "clone_from": "worlds/drone-london-recon HUD + fly/hack/quiz loop",
+  "swap_basemap": "Gulf geographic bounds + pins[] lat/lon",
+  "hud_adds": [
+   "TEAM badge RED|BLUE|PURPLE",
+   "ZONE COLOR G/Y/R",
+   "ANOMALY CLASS chip"
+  ],
+  "do_not": [
+   "ship real GNSS jammer parameters",
+   "ship OT protocol exploit strings",
+   "auto-authorize Marina flight"
+  ]
+ }
 }
