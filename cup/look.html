@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-title" content="LOOK"/>
+<title>LOOK</title>
+<style>
+:root{--g:#e7c56a;--t:#eef3ff;--d:#8fa0b8;--b:#06060e}
+*{box-sizing:border-box}html,body{margin:0;background:var(--b);color:var(--t);font-family:Georgia,serif}
+.scr{min-height:100dvh;display:none;flex-direction:column}.scr.on{display:flex}
+.hero img{width:100%;height:34vh;object-fit:cover}
+.host{display:flex;gap:10px;padding:10px 14px;background:#0b1018;align-items:center}
+.host b{color:var(--g);font:800 11px Inter,sans-serif;letter-spacing:.14em}
+.box{padding:16px;max-width:520px;margin:0 auto;width:100%}
+h1{color:var(--g);font-size:28px;margin:0 0 8px}p{font-size:18px;line-height:1.4}
+.go,.nx{display:block;width:100%;padding:16px;background:var(--g);color:#1a1408;border:0;border-radius:14px;font:800 16px Inter,sans-serif;text-align:center;text-decoration:none}
+.ch{width:100%;text-align:left;padding:12px;margin:6px 0;background:#0c141c;color:var(--t);border:1px solid #2c3c50;border-radius:10px;font:700 16px Inter,sans-serif}
+.good{border-color:#3ecf8e;background:#10281c}.bad{border-color:#c45;background:#2a1216}
+#bar{height:4px;background:#1b2430}#bar i{display:block;height:4px;background:var(--g);width:0}
+#why,.nx{display:none}#why{margin-top:8px;padding:10px;background:#0d1a14;border-radius:10px}
+.fly{display:block;padding:28px;background:#14110c;border:1px solid #3a2f16;color:var(--g);text-align:center;text-decoration:none;border-radius:14px;font:800 22px Inter,sans-serif}
+</style></head>
+<body>
+<div id="boot" class="scr on"><div class="box"><h1>LOOK</h1><p>Five pictures. Tap what is wrong. Then fly one ring in a pretend city.</p><button class="go" type="button" id="go">Play</button></div></div>
+<div id="play" class="scr"><div class="host"><b>HOST</b>&nbsp;<span id="line">Picture one.</span></div><div id="bar"><i id="fill"></i></div><div class="box"><p id="ask"></p><div id="chs"></div><div id="why"></div><button class="nx" type="button" id="nx">Next</button></div></div>
+<div id="flys" class="scr"><div class="host"><b>HOST</b>&nbsp;One flight.</div><div class="box"><p>You got <b id="sc">0</b> of 5.</p><a class="fly" href="https://bountywarz.com/worlds/drone-london-recon/?egg=gchq-relay">FLY THE RING</a><button class="go" type="button" id="again" style="margin-top:16px;background:#1a2430;color:#eef3ff">Again</button></div></div>
+<script>
+const Q=[
+{ask:"A night city on your phone. What is it?",ch:["A live war","A pretend city","Tonight's news","A real cockpit"],ok:1,why:"A model. Nothing here moves a real machine.",line:"A picture. Not a war."},
+{ask:"Why tap what is wrong in a picture?",ch:["To break a company tonight","To practice","To buy things","To fly a real drone"],ok:1,why:"Practice only.",line:"Skip words you do not know later."},
+{ask:"A ring glows on a building. First move?",ch:["Shoot it","Guess a password","Steer to the ring and look","Call the police"],ok:2,why:"Look first.",line:"The word comes after you have seen it."},
+{ask:"A real ship's number is on a live map. What now?",ch:["Copy it and log in","Leave it. Use the pretend map.","Stream it","Radio the ship"],ok:1,why:"Never touch a live target.",line:"Copies only."},
+{ask:"You got pictures right. What did you earn?",ch:["A license","A few minutes of practice","A job","Secret access"],ok:1,why:"Not a certificate.",line:"Optional flight next."}
+];
+let i=0,right=0,lock=false;const $=id=>document.getElementById(id);
+function show(id){document.querySelectorAll('.scr').forEach(s=>s.classList.remove('on'));$(id).classList.add('on')}
+$("go").onclick=()=>{show("play");draw()};
+$("again").onclick=()=>{i=0;right=0;lock=false;show("play");draw()};
+$("nx").onclick=()=>{i++;if(i>=Q.length){$("sc").textContent=right;show("flys")}else{lock=false;draw()}};
+function draw(){const q=Q[i];$("line").textContent=q.line;$("fill").style.width=(i/Q.length*100)+"%";$("ask").textContent=q.ask;$("why").style.display="none";$("nx").style.display="none";const box=$("chs");box.innerHTML="";q.ch.forEach((t,n)=>{const b=document.createElement("button");b.className="ch";b.type="button";b.textContent=t;b.onclick=()=>{if(lock)return;lock=true;if(n===q.ok)right++;box.children[n].classList.add(n===q.ok?"good":"bad");box.children[q.ok].classList.add("good");$("why").textContent=q.why;$("why").style.display="block";$("nx").style.display="block";$("fill").style.width=((i+1)/Q.length*100)+"%";};box.appendChild(b);});}
+</script></body></html>
