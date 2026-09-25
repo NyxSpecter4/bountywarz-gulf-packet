@@ -122,6 +122,17 @@
       if (k === 'l') { if (mode === 'escort') { clear(); ops('ESCORT WITHDRAWN'); } else spawnEscort(); }
       if (k === ' ' || k === 'f') fire();
     });
+    // click/tap fire (SYN-05): pointerdown marks the press point; pointerup within
+    // an 8px radius fires. Drag-look does NOT fire (movement cancels the shot).
+    var pressPt = null;
+    g.addEventListener('pointerdown', function (e) { pressPt = { x: e.clientX, y: e.clientY }; });
+    g.addEventListener('pointerup', function (e) {
+      if (!pressPt) return;
+      var dx = e.clientX - pressPt.x, dy = e.clientY - pressPt.y;
+      pressPt = null;
+      if (dx * dx + dy * dy < 64) fire();
+    });
+    g.addEventListener('pointercancel', function () { pressPt = null; });
     g.GulfCombatLite = { tick: tick, fire: fire, zagros: spawnZagros, escort: spawnEscort, clear: clear };
     return g.GulfCombatLite;
   }
