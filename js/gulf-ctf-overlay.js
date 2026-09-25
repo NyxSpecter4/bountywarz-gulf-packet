@@ -1,61 +1,19 @@
-/* gulf-ctf-overlay.js — classify loop. Classic script. No export. */
+/* gulf-ctf-overlay.js */
 (function (g) {
   'use strict';
-  var STORE = 'bw_gulf_solved_v2';
-  var overlay = null;
   var idx = 0;
-  var role = 'red_quiz';
   function $(id) { return document.getElementById(id); }
-  function assetCandidates(file) {
-    var path = g.location && g.location.pathname || '';
-    var list = ['data/' + file, '/worlds/drone-persian-gulf/data/' + file, '/worlds/drone-persian-gulf-recon/data/' + file, '/data/' + file];
-    if (path.indexOf('/gulf') === 0) list.unshift('/worlds/drone-persian-gulf/data/' + file);
-    return list;
-  }
-  function fetchFirst(files) {
-    var i = 0;
-    function next() {
-      if (i >= files.length) return Promise.reject(new Error('overlay json missing'));
-      var url = files[i++];
-      return fetch(url, { cache: 'no-store' }).then(function (r) {
-        if (!r.ok) return next();
-        return r.json();
-      }).catch(function () { return next(); });
-    }
-    return next();
-  }
-  function loadSolved() { try { return JSON.parse(localStorage.getItem(STORE) || '{}'); } catch (_) { return {}; } }
-  function saveSolved(map) { try { localStorage.setItem(STORE, JSON.stringify(map)); } catch (_) {} }
-  function solvedCount() { var map = loadSolved(); return Object.keys(map).filter(function (k) { return map[k]; }).length; }
-  function paintSolved() {
-    var el = $('gulf-solved');
-    if (el) el.textContent = String(solvedCount());
-    var total = $('gulf-total');
-    if (total) total.textContent = String((g.GULF_PINS || []).length || 0);
-  }
-  function quizFor(pin) { return pin[role] || pin.red_quiz || pin.blue_quiz || pin.purple_quiz || null; }
-  function emitThought(pin, ok, teach) {
-    try {
-      g.dispatchEvent(new CustomEvent('gulf-classify', {
-        detail: { ok: ok, name: pin && (pin.name || pin.id), teach: teach || (pin && pin.id), id: pin && pin.id }
-      }));
-    } catch (_) {}
-    try { g.dispatchEvent(new CustomEvent('kimi.thought.recorded', { detail: { source: 'gulf.overlay', challenge_id: pin && pin.id, reasoning_content: (ok ? 'classified ' : 'missed ') + (pin && (pin.id || pin.name)), content: pin && pin.name, speculative: !ok } })); } catch (_) {}
-    try {
-      fetch('/api/athelgard-telemetry', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ sessionId: (localStorage.getItem('bw_athelgard_session') || 'GULF'), worldId: 'drone-persian-gulf', events: [{ type: ok ? 'gulf-classify-ok' : 'gulf-classify-miss', pin: pin && pin.id, t: Date.now() }] }), keepalive: true }).catch(function () {});
-    } catch (_) {}
-  }
-  function renderQuiz(pin) {
-    if (!pin) return;
-    var q = quizFor(pin);
+  function renderQuiz(pin, side) {
+    var q = pin[side] || pin.red_quiz;
     if (!q) return;
     var box = $('gulf-quiz');
     if (!box) return;
     var html = '<button id="quiz-x" type="button" aria-label="Close">×</button>';
-    html += '<div class="gq-kicker">' + (role === 'blue_quiz' ? 'BLUE · DEFEND' : role === 'purple_quiz' ? 'PURPLE · SCORE' : 'RED · CLASSIFY') + '</div>';
-    html += '<div class="gq-h">' + (pin.name || pin.id) + '</div>';
+    html += '<div class="gq-h">' + pin.name + '</div>';
     html += '<div class="gq-p">' + q.prompt + '</div>';
-    (q.choices || []).forEach(function (c, i) { html += '<button class="gq-c" data-i="' + i + '">' + c + '</button>'; });
+    (q.choices || []).forEach(function (c, i) {
+      html += '<button class="gq-c" data-i="' + i + '">' + c + '</button>';
+    });
     box.innerHTML = html;
     box.style.display = 'block';
     var closer = document.getElementById('quiz-x');
@@ -63,89 +21,43 @@
     box.querySelectorAll('.gq-c').forEach(function (btn) {
       btn.onclick = function () {
         var ok = Number(btn.getAttribute('data-i')) === q.answer;
+        var log = $('gulf-log');
+        if (log) log.textContent += (ok ? 'yes ' : 'no ') + pin.name + '\n';
         if (ok) {
-          var map = loadSolved(); map[pin.id || pin.name] = true; saveSolved(map); paintSolved();
+          var solved = $('gulf-solved');
+          if (solved) solved.textContent = String((Number(solved.textContent) || 0) + 1);
           btn.textContent = 'Yes — class locked.';
-          btn.classList.add('ok');
-          emitThought(pin, true, q.teach);
-          if (g.EngineCore && g.EngineCore.earnCert) g.EngineCore.earnCert(pin.flag || pin.id, 'classify');
-          setTimeout(function () { box.style.display = 'none'; }, 900);
+          setTimeout(function () { box.style.display = 'none'; }, 700);
         } else {
-          btn.textContent = q.teach || 'Not that class.';
-          btn.classList.add('miss');
-          emitThought(pin, false, q.teach);
+          btn.textContent = q.teach || 'Not that.';
         }
       };
     });
   }
-  function openPin(i) {
-    var pins = g.GULF_PINS || [];
-    if (!pins[i]) return;
-    idx = i;
-    var list = $('sites');
-    if (list) {
-      list.querySelectorAll('[data-i]').forEach(function (x) {
-        x.classList.toggle('on', Number(x.getAttribute('data-i')) === i);
-      });
-    }
-    renderQuiz(pins[i]);
-  }
-  function openNearest() {
-    var pins = g.GULF_PINS || [];
-    if (g._gulfNearest && pins[g._gulfNearest.index]) {
-      openPin(g._gulfNearest.index);
-      return;
-    }
-    var me = (g.GulfRaycaster && g.GulfRaycaster.here) ? g.GulfRaycaster.here() : ((g.GulfRaycasterEngine && g.GulfRaycasterEngine.here) ? g.GulfRaycasterEngine.here() : { lat: 26.5667, lon: 56.25 });
-    var dist = (g.GulfRaycaster && g.GulfRaycaster.distKm) || (g.GulfRaycasterEngine && g.GulfRaycasterEngine.distKm);
-    var best = 0, bestD = 1e9;
-    for (var i = 0; i < pins.length; i++) {
-      var d = dist ? dist(me, { lat: pins[i].lat, lon: pins[i].lon != null ? pins[i].lon : pins[i].lng }) : i;
-      if (d < bestD) { bestD = d; best = i; }
-    }
-    openPin(best);
-  }
   function mount(data) {
-    overlay = data;
     g.GULF_PINS = (data && data.pins) || [];
-    paintSolved();
-    var list = $('sites') || $('gulf-pins') || $('gulf-ctf-target-list');
-    if (list && list.tagName !== 'PRE') {
-      var solved = loadSolved();
+    var list = $('sites') || $('gulf-pins');
+    if (list) {
       list.innerHTML = g.GULF_PINS.map(function (p, i) {
-        var label = String(p.name || p.id).replace(/\s+—.*$/, '');
-        var done = solved[p.id || p.name] ? ' done' : '';
-        return '<button class="pin' + done + '" type="button" data-i="' + i + '"><b>' + label + '</b><span>' + (p.anomaly_class ? String(p.anomaly_class).split('(')[0] : (p.track || '')) + '</span></button>';
+        var label = (p.name || p.id).replace(/\s+—.*$/, '');
+        return '<button class="pin" data-i="' + i + '">' + label + '</button>';
       }).join('');
-      list.querySelectorAll('[data-i]').forEach(function (b) {
+      list.querySelectorAll('.pin').forEach(function (b) {
         b.onclick = function () {
-          openPin(Number(b.getAttribute('data-i')));
+          list.querySelectorAll('.pin').forEach(function (x) { x.classList.remove('on'); });
+          b.classList.add('on');
+          idx = Number(b.getAttribute('data-i'));
+          try { g.dispatchEvent(new CustomEvent('gulf-fly', { detail: { index: idx } })); } catch (err) {}
+          renderQuiz(g.GULF_PINS[idx], 'red_quiz');
         };
       });
     }
-    g.addEventListener('keydown', function (e) {
-      if (e.key === 'h' || e.key === 'H') openNearest();
-      if (e.key === '1') role = 'red_quiz';
-      if (e.key === '2') role = 'blue_quiz';
-      if (e.key === '3') role = 'purple_quiz';
-    });
-    g.GulfCTF = {
-      openNearest: openNearest,
-      openPin: openPin,
-      overlay: overlay,
-      setRole: function (r) { role = r; }
-    };
+    g.GulfCTF = { overlay: data };
     try { g.dispatchEvent(new Event('gulf-pins-ready')); } catch (e) {}
   }
   function load() {
-    fetchFirst(assetCandidates('ctf-overlay.json')).then(mount).catch(function () {
-      if (g.BUILDING_TWINS && g.BUILDING_TWINS.length) {
-        mount({ pins: g.BUILDING_TWINS.map(function (t) {
-          return { id: t.tier1_twin, name: t.tier1_twin, lat: t.lat, lon: t.lon || t.lng, red_quiz: { prompt: 'Training twin only. What is this overlay for?', choices: ['Live plant access', 'Classify a local fixture', 'AIS spoof recipe', 'Fire mission'], answer: 1, teach: 'Sandbox. Classify. Do not touch live infra.' } };
-        }) });
-      }
-    });
+    fetch('data/ctf-overlay.json', { cache: 'no-store' }).then(function (r) { return r.json(); }).then(mount);
   }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', load);
   else load();
-}(window));
+})(window);

@@ -1,133 +1,118 @@
-/* world-boot.js — synthesized Gulf theater. Classic. No export. */
+/* world-boot.js — WASD fly, mouse look, fly-to pin. Classic script. */
 (function (g) {
   'use strict';
   var retry = 0;
-  var C_LAT = 26.8, C_LNG = 53.8;
-  var M_PER_DEG_LAT = 110540, M_PER_DEG_LNG = 88600;
-  var keys = Object.create(null);
-  var last = 0, yaw = 0, pitch = -0.18;
-  if (typeof g.geoToWorld !== 'function') {
-    g.geoToWorld = function (lat, lng) { return [(lng - C_LNG) * M_PER_DEG_LNG, (lat - C_LAT) * M_PER_DEG_LAT]; };
-  }
-  if (typeof g.worldToGeo !== 'function') {
-    g.worldToGeo = function (x, z) { return { lat: C_LAT + z / M_PER_DEG_LAT, lng: C_LNG + x / M_PER_DEG_LNG }; };
-  }
-  g.BW_WORLD = g.BW_WORLD || { id: 'persian-gulf', name: 'Persian Gulf', version: 'synth-2026-09-24', hub: '/' };
-  g.__CITY_NAME = g.__CITY_NAME || 'Persian Gulf';
-  g.__CERT_REGION = 'persian-gulf';
-  function resize(c, cam, renderer) {
+  var keys = {};
+  var yaw = 0;
+  var pitch = -0.18;
+  var flying = false;
+  function resize(c) {
     if (!c) return;
-    var w = Math.max(320, g.innerWidth || 1280), h = Math.max(240, g.innerHeight || 720);
-    c.width = w; c.height = h; c.style.width = '100%'; c.style.height = '100%'; c.style.display = 'block';
-    if (cam) { cam.aspect = w / Math.max(1, h); cam.updateProjectionMatrix(); }
-    if (renderer) renderer.setSize(w, h, false);
+    var w = Math.max(320, g.innerWidth || 1280);
+    var h = Math.max(240, g.innerHeight || 720);
+    if (c.width !== w) c.width = w;
+    if (c.height !== h) c.height = h;
+    c.style.width = '100%';
+    c.style.height = '100%';
+    c.style.display = 'block';
   }
-  function nearestPin(cam) {
-    var pins = g.GULF_PINS || [];
-    if (!pins.length || !cam) return null;
-    var geo = g.worldToGeo(cam.position.x, cam.position.z);
-    var best = null, bestD = 1e12;
-    for (var i = 0; i < pins.length; i++) {
-      var pin = pins[i], lon = pin.lon != null ? pin.lon : pin.lng;
-      var dlat = (pin.lat - geo.lat) * M_PER_DEG_LAT, dlng = (lon - geo.lng) * M_PER_DEG_LNG;
-      var d = Math.sqrt(dlat * dlat + dlng * dlng);
-      if (d < bestD) { bestD = d; best = { pin: pin, index: i, km: d / 1000, meters: d }; }
-    }
-    return best;
+  function project(lat, lon, origin) {
+    return { x: (lon - origin.lon) * 900, z: (origin.lat - lat) * 900 };
   }
   function boot() {
-    if (g.GulfWorld && g.GulfWorld.renderer) {
-      if (g.GulfRaycasterEngine && !g.GulfRaycaster) g.GulfRaycasterEngine.attach(g.GulfWorld.scene, g.GulfWorld.camera, g.GulfWorld.renderer, g.GulfWorld.canvas);
-      return;
-    }
     var c = document.getElementById('game-canvas');
-    if (!c) { c = document.createElement('canvas'); c.id = 'game-canvas'; document.body.insertBefore(c, document.body.firstChild); }
+    if (!c) { c = document.createElement('canvas'); c.id = 'game-canvas'; document.body.appendChild(c); }
     resize(c);
     var THREE = g.THREE;
-    if (!THREE || !THREE.WebGLRenderer) {
-      retry += 1;
-      if (retry < 40) { console.warn('[GulfWorld] Three.js missing — retrying'); setTimeout(boot, 250); }
-      else console.error('[GulfWorld] Three.js never arrived');
-      return;
-    }
-    var core = g.EngineCore || {};
-    var renderer = (typeof core.createRenderer === 'function') ? core.createRenderer(THREE, c, { clear: 0x071018 }) : new THREE.WebGLRenderer({ canvas: c, antialias: (g.devicePixelRatio || 1) < 2 });
-    if (!core.createRenderer) {
-      renderer.setPixelRatio(Math.min(g.devicePixelRatio || 1, 2));
-      renderer.setSize(c.width, c.height, false);
-      renderer.setClearColor(0x071018, 1);
-      g._engineCoreActive = false;
-    }
+    if (!THREE || !THREE.WebGLRenderer) { retry += 1; if (retry < 40) return setTimeout(boot, 250); return; }
+    var renderer = new THREE.WebGLRenderer({ canvas: c, antialias: true, alpha: false });
+    renderer.setPixelRatio(Math.min(g.devicePixelRatio || 1, 1.5));
+    renderer.setSize(c.width, c.height, false);
+    renderer.setClearColor(0x0a1620, 1);
     var scene = new THREE.Scene();
-    scene.background = new THREE.Color(0x071018);
-    scene.fog = new THREE.Fog(0x0b1a24, 400, 4200);
-    var cam = new THREE.PerspectiveCamera(58, c.width / Math.max(1, c.height), 0.4, 12000);
-    cam.position.set(0, 48, 180);
-    scene.add(new THREE.HemisphereLight(0x9ec4d8, 0x0c2a32, 0.6));
-    var sun = new THREE.DirectionalLight(0xffd27a, 1.2); sun.position.set(-220, 260, 90); scene.add(sun);
-    scene.add(new THREE.AmbientLight(0x1a2a40, 0.5));
-    scene.add(new THREE.Mesh(new THREE.SphereGeometry(5200, 24, 16), new THREE.MeshBasicMaterial({ color: 0x102436, side: THREE.BackSide })));
-    var water = new THREE.Mesh(new THREE.PlaneGeometry(8000, 8000, 1, 1), new THREE.MeshStandardMaterial({ color: 0x163e4c, roughness: 0.28, metalness: 0.12 }));
-    water.rotation.x = -Math.PI / 2; water.name = 'gulf-water'; scene.add(water);
-    var pins = g.GULF_PINS || [];
-    for (var i = 0; i < pins.length; i++) {
-      var pin = pins[i], lon = pin.lon != null ? pin.lon : pin.lng, xz = g.geoToWorld(pin.lat, lon);
-      var pad = new THREE.Mesh(new THREE.CylinderGeometry(18, 22, 4, 8), new THREE.MeshStandardMaterial({ color: pin.faction === 'CHAOS' ? 0x7a2030 : pin.faction === 'NEO' ? 0x1a6a44 : 0x2a5a6a, roughness: 0.8 }));
-      pad.position.set(xz[0], 2, xz[1]); pad.userData.pinIndex = i; scene.add(pad);
+    scene.fog = new THREE.Fog(0x0a1620, 400, 2200);
+    var cam = new THREE.PerspectiveCamera(60, c.width / Math.max(1, c.height), 0.5, 5000);
+    cam.position.set(0, 70, 160);
+    scene.add(new THREE.HemisphereLight(0x8ec8e8, 0x0a1a14, 0.85));
+    var sun = new THREE.DirectionalLight(0xffd27a, 1.15);
+    sun.position.set(-80, 140, 40);
+    scene.add(sun);
+    var water = new THREE.Mesh(new THREE.PlaneGeometry(4000, 4000, 1, 1), new THREE.MeshStandardMaterial({ color: 0x143844, roughness: 0.28, metalness: 0.08 }));
+    water.rotation.x = -Math.PI / 2;
+    scene.add(water);
+    var origin = { lat: 26.5667, lon: 56.25 };
+    var beacons = [];
+    function rebuildPins() {
+      beacons.forEach(function (b) { scene.remove(b.mesh); });
+      beacons = [];
+      var pins = g.GULF_PINS || [];
+      for (var i = 0; i < pins.length; i++) {
+        var p = project(pins[i].lat, pins[i].lon || pins[i].lng, origin);
+        var group = new THREE.Group();
+        var stem = new THREE.Mesh(new THREE.BoxGeometry(8, 36, 8), new THREE.MeshStandardMaterial({ color: i === 0 ? 0xe2c36b : 0x3ec7d6, roughness: 0.45 }));
+        stem.position.y = 18;
+        var ring = new THREE.Mesh(new THREE.RingGeometry(14, 18, 24), new THREE.MeshBasicMaterial({ color: 0x3ec7d6, side: THREE.DoubleSide, transparent: true, opacity: 0.75 }));
+        ring.rotation.x = -Math.PI / 2; ring.position.y = 1.2;
+        group.add(stem); group.add(ring); group.position.set(p.x, 0, p.z); scene.add(group);
+        beacons.push({ mesh: group, pin: pins[i], x: p.x, z: p.z });
+      }
     }
-    var tanker = new THREE.Mesh(new THREE.BoxGeometry(18, 6, 70), new THREE.MeshStandardMaterial({ color: 0x4a5560, roughness: 0.7 }));
-    tanker.position.set(40, 3, -30); scene.add(tanker);
-    g.GulfWorld = { scene: scene, camera: cam, renderer: renderer, canvas: c, water: water, drone: cam };
-    if (g.GulfRaycasterEngine) g.GulfRaycasterEngine.attach(scene, cam, renderer, c);
-    var combat = (typeof g.GulfCombatLiteAttach === 'function') ? g.GulfCombatLiteAttach({ THREE: THREE, scene: scene, camera: cam, tankerAnchor: { x: 40, z: -30 } }) : null;
-    var fps = (typeof core.makeFpsMeter === 'function') ? core.makeFpsMeter(8) : null;
-    g.addEventListener('keydown', function (e) { keys[e.key.toLowerCase()] = true; });
-    g.addEventListener('keyup', function (e) { keys[e.key.toLowerCase()] = false; });
-    g.addEventListener('resize', function () { resize(c, cam, renderer); });
-    var dragging = false;
-    c.addEventListener('pointerdown', function (ev) {
-      if (ev.button === 0 && !ev.shiftKey && combat) combat.fire();
-      if (ev.button === 2 || ev.shiftKey) dragging = true;
+    rebuildPins();
+    g.addEventListener('gulf-pins-ready', rebuildPins);
+    function applyLook() { cam.quaternion.setFromEuler(new THREE.Euler(pitch, yaw, 0, 'YXZ')); }
+    applyLook();
+    function flyToIndex(i) {
+      var b = beacons[i]; if (!b) return;
+      flying = { x: b.x - Math.sin(yaw) * 70, y: 48, z: b.z - Math.cos(yaw) * 70 };
+    }
+    g.GulfFlyTo = flyToIndex;
+    g.addEventListener('gulf-fly', function (ev) {
+      var i = ev && ev.detail && ev.detail.index; if (typeof i === 'number') flyToIndex(i);
     });
-    g.addEventListener('pointerup', function () { dragging = false; });
-    g.addEventListener('pointermove', function (ev) {
-      if (!dragging) return;
-      yaw -= ev.movementX * 0.005;
-      pitch = Math.max(-1.2, Math.min(0.35, pitch - ev.movementY * 0.004));
+    g.addEventListener('keydown', function (e) {
+      keys[e.key.toLowerCase()] = true; if (e.code === 'Space') { keys.space = true; e.preventDefault(); }
     });
-    c.addEventListener('contextmenu', function (e) { e.preventDefault(); });
+    g.addEventListener('keyup', function (e) {
+      keys[e.key.toLowerCase()] = false; if (e.code === 'Space') keys.space = false;
+    });
+    c.addEventListener('click', function () { if (c.requestPointerLock) c.requestPointerLock(); });
+    g.addEventListener('mousemove', function (e) {
+      if (document.pointerLockElement !== c) return;
+      yaw -= e.movementX * 0.0022; pitch -= e.movementY * 0.0022;
+      if (pitch > 1.2) pitch = 1.2; if (pitch < -1.35) pitch = -1.35;
+    });
+    var last = performance.now();
     function frame(now) {
-      var dt = last ? Math.min(0.05, (now - last) / 1000) : 0.016;
-      last = now;
-      if (fps) fps.tick(dt);
-      if (!g.__GULF_PAUSED) {
-        var speed = (keys.shift ? 220 : 90) * dt;
-        var forward = (keys.w || keys.arrowup) ? 1 : (keys.s || keys.arrowdown) ? -1 : 0;
-        var strafe = (keys.d || keys.arrowright) ? 1 : (keys.a || keys.arrowleft) ? -1 : 0;
-        var lift = keys.e ? 1 : keys.q ? -1 : 0;
-        if (forward || strafe || lift) {
-          cam.position.x += Math.sin(yaw) * forward * speed + Math.cos(yaw) * strafe * speed;
-          cam.position.z += Math.cos(yaw) * forward * speed - Math.sin(yaw) * strafe * speed;
-          cam.position.y = Math.max(8, Math.min(420, cam.position.y + lift * speed));
-        }
-        if (combat) combat.tick(dt);
+      var dt = Math.min(0.05, (now - last) / 1000); last = now;
+      if (c.width !== g.innerWidth || c.height !== g.innerHeight) {
+        resize(c); cam.aspect = c.width / Math.max(1, c.height); cam.updateProjectionMatrix(); renderer.setSize(c.width, c.height, false);
       }
-      cam.rotation.order = 'YXZ'; cam.rotation.y = yaw; cam.rotation.x = pitch;
-      var n = nearestPin(cam);
-      g._gulfNearest = n;
-      if (n && n.pin) {
-        var m = Math.round(n.meters);
-        g._gulfTargetCopy = { name: n.pin.name || n.pin.id, sub: m < 400 ? 'IN RANGE · H / Classify' : ('Fly closer · ' + m + ' m'), inRange: m < 400, meters: m, index: n.index };
-      } else {
-        g._gulfTargetCopy = { name: 'NO TARGET', sub: 'WASD fly · K intercept · L escort', inRange: false, meters: null, index: -1 };
+      applyLook();
+      var forward = new THREE.Vector3(0, 0, -1).applyQuaternion(cam.quaternion); forward.y = 0;
+      if (forward.lengthSq() > 0.0001) forward.normalize();
+      var right = new THREE.Vector3(1, 0, 0).applyQuaternion(cam.quaternion); right.y = 0;
+      if (right.lengthSq() > 0.0001) right.normalize();
+      var speed = (keys.shift ? 180 : 70) * dt;
+      if (keys.w || keys.arrowup) cam.position.addScaledVector(forward, speed);
+      if (keys.s || keys.arrowdown) cam.position.addScaledVector(forward, -speed);
+      if (keys.d || keys.arrowright) cam.position.addScaledVector(right, speed);
+      if (keys.a || keys.arrowleft) cam.position.addScaledVector(right, -speed);
+      if (keys.space || keys.e) cam.position.y += speed;
+      if (keys.q || keys.control) cam.position.y -= speed;
+      if (cam.position.y < 8) cam.position.y = 8; if (cam.position.y > 400) cam.position.y = 400;
+      if (flying) {
+        cam.position.x += (flying.x - cam.position.x) * Math.min(1, dt * 3);
+        cam.position.y += (flying.y - cam.position.y) * Math.min(1, dt * 3);
+        cam.position.z += (flying.z - cam.position.z) * Math.min(1, dt * 3);
+        if (Math.abs(cam.position.x - flying.x) < 2) flying = false;
       }
-      try { g.dispatchEvent(new Event('gulf-hud-tick')); } catch (_) {}
       renderer.render(scene, cam);
       requestAnimationFrame(frame);
     }
     requestAnimationFrame(frame);
-    console.info('[GulfWorld] synth boot', c.width + 'x' + c.height, 'pins=' + pins.length, 'core=' + !!g._engineCoreActive);
+    g.GulfWorld = { scene: scene, camera: cam, renderer: renderer, canvas: c };
+    console.info('[GulfWorld] fly boot');
   }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot);
   else boot();
-}(typeof window !== 'undefined' ? window : this));
+})(window);
