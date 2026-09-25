@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Athelgard Range Cup — Jeopardy</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet"/>
+<style>html,body{margin:0;background:#07080c;color:#ece8dc;font-family:Inter,system-ui,sans-serif}header{display:flex;justify-content:space-between;padding:16px 20px;border-bottom:1px solid #222}#clock{color:#e2c36b}#board{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;padding:16px;max-width:1100px;margin:0 auto}.cat{text-align:center;font-size:12px;color:#e2c36b;padding:8px}.cell{background:#121821;border:1px solid #2a3344;border-radius:10px;padding:22px 8px;text-align:center;cursor:pointer;font-weight:700;color:#3ec7d6;font-size:22px}.cell.dead{opacity:.35;color:#888}#modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);align-items:center;justify-content:center}#modal.on{display:flex}#card{width:min(520px,92vw);background:#10141c;border:1px solid #2a3344;border-radius:14px;padding:22px}.gq-c{display:block;width:100%;margin:0 0 8px;text-align:left;background:#1a212c;border:1px solid #2e3848;color:#ece8dc;padding:10px;border-radius:8px;cursor:pointer}a{color:#9ad}</style></head>
+<body><header><b>ATHELGARD RANGE CUP</b><span>Score <span id="score">0</span> · misses <span id="miss">0</span> · <span id="clock">90:00</span></span></header>
+<p style="max-width:1100px;margin:10px auto;padding:0 16px;font-size:13px;color:#aaa">Jeopardy on twins. 90 min. Teams 1–4. No live hulls. <a href="https://bountywarz.com/worlds/drone-london-recon/">London</a></p>
+<div id="board"></div><div id="modal"><div id="card"></div></div>
+<script>
+const $=id=>document.getElementById(id); let board=null,left=90*60,dead=new Set();
+fetch('data/jeopardy-board.json').then(r=>r.json()).then(j=>{
+  board=j; const el=$('board');
+  j.categories.forEach(c=>{const h=document.createElement('div');h.className='cat';h.textContent=c.name;el.appendChild(h);});
+  for(let row=0;row<4;row++) j.categories.forEach(c=>{
+    const cell=c.cells[row]; const b=document.createElement('button'); b.className='cell'; b.textContent=cell.points;
+    b.onclick=()=>openCell(cell,b); el.appendChild(b);
+  });
+});
+function openCell(cell,btn){
+  if(dead.has(cell.id)) return;
+  const card=$('card');
+  card.innerHTML='<h2>'+cell.points+' · '+cell.title+'</h2><p>'+cell.prompt+'</p>';
+  cell.choices.forEach((t,i)=>{const x=document.createElement('button');x.className='gq-c';x.textContent=t;
+    x.onclick=()=>{const ok=i===cell.answer; if(ok){$('score').textContent=String(+($('score').textContent)+cell.points);x.textContent='Yes — '+cell.flag;dead.add(cell.id);btn.classList.add('dead');} else {$('miss').textContent=String(+($('miss').textContent)+1);x.textContent=cell.teach;}};
+    card.appendChild(x);});
+  const c=document.createElement('button');c.className='gq-c';c.textContent='Close';c.onclick=()=>$('modal').classList.remove('on');card.appendChild(c);
+  $('modal').classList.add('on');
+}
+setInterval(()=>{if(left<=0){$('clock').textContent='STOP';return;}left--;$('clock').textContent=String(Math.floor(left/60)).padStart(2,'0')+':'+String(left%60).padStart(2,'0');},1000);
+</script></body></html>
