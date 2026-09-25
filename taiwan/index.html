@@ -1,0 +1,19 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Athelgard Range — Taiwan Strait</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet"/>
+<style>html,body{margin:0;height:100%;background:#07080c;color:#ece8dc;font-family:Inter,system-ui,sans-serif;overflow:hidden}canvas#game-canvas{position:fixed;inset:0} .bar{position:fixed;top:0;left:0;right:0;z-index:50;display:flex;justify-content:space-between;padding:14px 18px;pointer-events:none} #sites{position:fixed;top:58px;left:14px;z-index:50;width:240px;max-height:calc(100vh - 140px);overflow:auto;display:flex;flex-direction:column;gap:6px} #sites button{appearance:none;border:0;border-left:2px solid #3ec7d6;background:rgba(8,10,16,.72);color:#d9f6fa;text-align:left;padding:10px 12px;font:13px/1.35 Inter,sans-serif;cursor:pointer} #hint{position:fixed;bottom:16px;left:50%;transform:translateX(-50%);z-index:50;font-size:13px;background:rgba(7,8,12,.7);padding:8px 14px;border-radius:999px} #gulf-quiz,#gulf-debrief,#gulf-scope{position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);z-index:70;width:min(440px,92vw);background:#10141c;border:1px solid #2a3344;border-radius:14px;padding:22px 20px} #gulf-quiz,#gulf-debrief{display:none} .gq-c{display:block;width:100%;margin:0 0 8px;text-align:left;background:#1a212c;border:1px solid #2e3848;color:#ece8dc;padding:10px;border-radius:8px;cursor:pointer} #gulf-scope button,#gulf-debrief button{width:100%;background:#e2c36b;border:0;padding:10px;border-radius:8px;font-weight:600;cursor:pointer} .k{font-size:11px;letter-spacing:.14em;color:#e2c36b} #gulf-log{display:none} nav.th{position:fixed;top:42px;right:14px;z-index:50;font-size:11px} nav.th a{color:#c9c3b4;margin-left:8px}</style></head>
+<body>
+<canvas id="game-canvas"></canvas>
+<div class="bar"><b>Athelgard Range · Taiwan Strait</b><span>Cards <span id="gulf-solved">0</span> / 3</span></div>
+<nav class="th"><a href="../">Gulf</a><a href="../black-sea/">Black Sea</a><a href="https://bountywarz.com/worlds/drone-london-recon/">London city</a></nav>
+<div id="sites"></div><div id="hint">Click water. W forward. Pick a site.</div>
+<div id="gulf-scope"><div class="k">AUTHORIZED RANGE</div><h3>This is a sandbox.</h3><p>Taiwan Strait twins. Classify jumps, identity collisions, aerodrome rings, crop circles. No live hulls.</p><p>Cards are sim evidence — not a certificate.</p><button type="button" id="scope-go">I understand — enter</button></div>
+<div id="gulf-quiz"></div><div id="gulf-debrief"></div><pre id="gulf-log"></pre>
+<script>window.RANGE={origin:{lat:24.4,lon:119.8},overlay:'data/ctf-overlay.json'};</script>
+<script src="https://unpkg.com/three@0.160.0/build/three.min.js"></script>
+<script src="../js/world-boot.js"></script>
+<script src="../js/gulf-ctf-overlay.js"></script>
+<script src="../js/gulf-session-end.js"></script>
+<script>document.getElementById('scope-go').onclick=function(){document.getElementById('gulf-scope').style.display='none';};</script>
+</body></html>
