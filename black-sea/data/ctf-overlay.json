@@ -1,0 +1,19 @@
+{
+  "theater": "black-sea",
+  "origin": {"lat": 44.55, "lon": 33.45},
+  "disclaimer": "Fictional twins. Classify only.",
+  "pins": [
+    {"id":"PIN-GELENDZHIK-AIRPORT","name":"Novorossiysk Approaches — Airport Stack","lat":44.58,"lon":38.01,"anomaly_class":"GNSS spoofing leaking into AIS",
+      "red_quiz":{"prompt":"Twenty-plus AIS tracks collapse onto Gelendzhik Airport inland. Speeds flip 0 kn / 100 kn. What CLASS?","choices":["Normal Black Sea anchorage","GNSS spoofing feeding AIS (coherent false airport fix)","Single broken transponder","Chart datum mismatch only"],"answer":1,"teach":"Many ships, one inland airport, cartoon speeds = spoofed PNT. Not parking."}},
+    {"id":"PIN-SIMFEROPOL-AIRPORT","name":"Crimea Approaches — Second Airport Stack","lat":45.04,"lon":33.98,"anomaly_class":"Mass AIS at an inland field",
+      "red_quiz":{"prompt":"Same hour: ~50 tracks at Simferopol field, ~30 at Gelendzhik. What does the PAIR tell you?","choices":["Two busy cargo airports on the water","Two spoof aim-points, one regional event — not two bad boxes","Tides moved the anchorage","ADS-B mixed into AIS by accident"],"answer":1,"teach":"Two land fields at once is a theater event."}},
+    {"id":"PIN-KERCH-RF","name":"Kerch Strait — Radio vs Plot","lat":45.27,"lon":36.55,"anomaly_class":"AIS position vs receiver geography",
+      "red_quiz":{"prompt":"Plot says west Black Sea off Romania. A receiver at Kerch hears the same VHF. What CLASS?","choices":["Normal long-range satellite AIS","Plot is a lie — VHF cannot be both Romania and heard at Kerch","Fog bending radio","ECDIS units mismatch only"],"answer":1,"teach":"AIS VHF is short-range. Impossible RF path beats the pretty line."}},
+    {"id":"PIN-JAM-VS-SPOOF","name":"Odessa Approaches — Lost Fix","lat":46.32,"lon":30.76,"anomaly_class":"GNSS jamming",
+      "red_quiz":{"prompt":"Receivers drop lock. No shared fake airport. What CLASS?","choices":["Spoof to Gelendzhik","Jamming / denial — loss of fix, not a coherent false position","Dark fleet MMSI swap","Normal GPS multipath in port"],"answer":1,"teach":"Jam = silence. Spoof = many ships agree on a wrong place."}},
+    {"id":"PIN-SMOLENSK-CIRCLE","name":"Aviation Twin — Circle Track","lat":44.6,"lon":34.4,"anomaly_class":"Circle geometry on a PNT feed",
+      "red_quiz":{"prompt":"A PNT feed draws a tight circle over land for many tracks. Closest CLASS?","choices":["Holding pattern at 400 ft","Spoofed geometry (crop-circle family) — not a real racetrack","SAR search pattern","Anchor swing"],"answer":1,"teach":"Same lie as Hormuz tankers in a circle."}},
+    {"id":"PIN-SCOPE","name":"Range Law — Twin Only","lat":44.7,"lon":33.5,"anomaly_class":"scope",
+      "red_quiz":{"prompt":"You see a real MMSI on a public map. What do you do in this range?","choices":["Hunt it and write the owner","Leave it. This hour uses fictional twins only","Stand up a nation team","Jam back"],"answer":1,"teach":"Public cases teach the class. Live hunts are out."}}
+  ]
+}

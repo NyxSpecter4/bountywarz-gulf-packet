@@ -1,0 +1,19 @@
+{
+  "theater": "taiwan-strait",
+  "origin": {"lat": 24.4, "lon": 119.8},
+  "disclaimer": "Fictional twins. Classify only.",
+  "pins": [
+    {"id":"PIN-STRAIT-MID","name":"Taiwan Strait Midline — Jump Cluster","lat":24.5,"lon":119.6,"anomaly_class":"Impossible AIS jumps",
+      "red_quiz":{"prompt":"Tracks jump 80 nm in two minutes across the strait. What CLASS?","choices":["Fast ferry schedule","Implausible kinematics — treat as PNT/AIS integrity failure until proven otherwise","Tidal current","Normal satellite AIS lag"],"answer":1,"teach":"Speed a hull cannot do is a class."}},
+    {"id":"PIN-KAOHSIUNG","name":"Kaohsiung Approaches — Port Twin","lat":22.6,"lon":120.28,"anomaly_class":"AIS identity confusion",
+      "red_quiz":{"prompt":"Two tracks, one name, one in the basin and one 400 nm south. What CLASS first?","choices":["Sister ships always share a name","Identity collision / cloned plot — do not assume either is the hull","Normal AIS refresh","Pilot boarding"],"answer":1,"teach":"Duplicate identity is a classify problem."}},
+    {"id":"PIN-TPE-BUFFER","name":"TPE / Songshan Rings — UAS Law","lat":25.08,"lon":121.55,"anomaly_class":"Controlled-aerodrome buffer",
+      "red_quiz":{"prompt":"Night FPV geotagged inside the published aerodrome ring. What CLASS?","choices":["Recreational ok under 400 ft","Unlawful UAS in a controlled-aerodrome buffer on a twin — same call as DXB","Part 107 automatically covers Taiwan","Need a tanker escort"],"answer":1,"teach":"Buffer rings are the lesson."}},
+    {"id":"PIN-BASHI","name":"Bashi Channel — Survey Track Twin","lat":21.7,"lon":121.4,"anomaly_class":"Legal / EEZ overlay",
+      "red_quiz":{"prompt":"A survey hull paints a long crescent in a claimed EEZ. Your job in this range?","choices":["Assign a nation team and fire","Classify: survey pattern vs spoofed geometry vs dark track — twins only","Board it","Open world #6"],"answer":1,"teach":"This hour is the call, not the navy."}},
+    {"id":"PIN-SCS-EDGE","name":"South China Sea Approach — Crop Circle","lat":21.0,"lon":117.8,"anomaly_class":"GNSS spoofing reflected in AIS",
+      "red_quiz":{"prompt":"AIS draws a tight circle over open water for a cluster of hulls. Closest CLASS?","choices":["Typhoon evasion racetrack","Spoofed PNT leaking into AIS (crop-circle family)","Fish-agg device","Normal STS transfer"],"answer":1,"teach":"Same class as Hormuz and Gelendzhik. Different sea."}},
+    {"id":"PIN-SCOPE-TW","name":"Range Law — Twin Only","lat":24.2,"lon":120.5,"anomaly_class":"scope",
+      "red_quiz":{"prompt":"This map is next to a live strait. What is in scope?","choices":["Any MMSI you can google","Fictional twins and published patterns only","PLA / ROCN team deathmatch","Submarine hunt"],"answer":1,"teach":"Water is the theater. Live hulls are not the target."}}
+  ]
+}
