@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Persian Gulf</title>
+  <title>Athelgard Range — Persian Gulf</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet" />
   <style>
@@ -12,33 +12,44 @@
     .bar{position:fixed;top:0;left:0;right:0;z-index:50;display:flex;align-items:center;justify-content:space-between;padding:14px 18px;background:linear-gradient(180deg,rgba(7,8,12,.92),rgba(7,8,12,0));pointer-events:none}
     .bar b{font-size:15px;letter-spacing:.04em;font-weight:600}
     .bar span{font-size:13px;opacity:.85}
-    #sites{position:fixed;top:58px;left:14px;z-index:50;width:228px;max-height:calc(100vh - 120px);overflow:auto;display:flex;flex-direction:column;gap:6px}
-    #sites button{appearance:none;border:0;border-left:2px solid #3ec7d6;background:rgba(8,10,16,.72);color:#d9f6fa;text-align:left;padding:10px 12px;font:13px Inter,sans-serif;cursor:pointer;border-radius:0 8px 8px 0}
+    #sites{position:fixed;top:58px;left:14px;z-index:50;width:240px;max-height:calc(100vh - 140px);overflow:auto;display:flex;flex-direction:column;gap:6px}
+    #sites button{appearance:none;border:0;border-left:2px solid #3ec7d6;background:rgba(8,10,16,.72);color:#d9f6fa;text-align:left;padding:10px 12px;font:13px/1.35 Inter,sans-serif;cursor:pointer;border-radius:0 8px 8px 0;white-space:normal}
     #sites button:hover,#sites button.on{background:rgba(20,40,48,.9);border-left-color:#e2c36b}
     #hint{position:fixed;bottom:16px;left:50%;transform:translateX(-50%);z-index:50;font-size:13px;color:#c9c3b4;background:rgba(7,8,12,.7);padding:8px 14px;border-radius:999px}
-    #gulf-quiz{display:none;position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);z-index:60;width:min(440px,92vw);background:#10141c;border:1px solid #2a3344;border-radius:14px;padding:20px 20px 16px;box-shadow:0 20px 60px rgba(0,0,0,.45)}
-    #gulf-quiz .gq-h{font-size:16px;font-weight:600;margin:0 28px 6px 0}
-    #gulf-quiz .gq-p{font-size:14px;line-height:1.45;color:#d7d2c6;margin:0 0 14px}
-    #gulf-quiz .gq-c{display:block;width:100%;margin:0 0 8px;text-align:left;background:#1a212c;border:1px solid #2e3848;color:#ece8dc;padding:10px 12px;border-radius:8px;cursor:pointer;font:13px Inter,sans-serif}
+    #gulf-quiz,#gulf-debrief,#gulf-scope{position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);z-index:70;width:min(440px,92vw);background:#10141c;border:1px solid #2a3344;border-radius:14px;padding:22px 20px 18px;box-shadow:0 20px 60px rgba(0,0,0,.45)}
+    #gulf-quiz{display:none;z-index:60}
+    #gulf-debrief{display:none;z-index:80}
+    #gulf-quiz .gq-h,.gd-h{font-size:16px;font-weight:600;margin:0 28px 8px 0}
+    #gulf-quiz .gq-p,#gulf-scope p,#gulf-debrief p{font-size:14px;line-height:1.45;color:#d7d2c6;margin:0 0 12px}
+    #gulf-quiz .gq-c,#gulf-scope button,#gulf-debrief button{display:block;width:100%;margin:0 0 8px;text-align:left;background:#1a212c;border:1px solid #2e3848;color:#ece8dc;padding:10px 12px;border-radius:8px;cursor:pointer;font:13px Inter,sans-serif}
+    #gulf-scope button,#gulf-debrief button{text-align:center;background:#e2c36b;color:#1a1408;border:0;font-weight:600}
     #gulf-quiz .gq-c:hover{border-color:#3ec7d6}
     #quiz-x{position:absolute;top:10px;right:12px;background:none;border:0;color:#9aa;font-size:20px;cursor:pointer}
+    .gd-k,#gulf-scope .k{font-size:11px;letter-spacing:.14em;color:#e2c36b;margin:0 0 8px}
     #gulf-log{display:none}
   </style>
 </head>
 <body>
   <canvas id="game-canvas"></canvas>
-  <div class="bar">
-    <b>Persian Gulf</b>
-    <span>Solved <span id="gulf-solved">0</span></span>
-  </div>
+  <div class="bar"><b>Athelgard Range</b><span>Cards <span id="gulf-solved">0</span> / 3</span></div>
   <div id="sites"></div>
-  <div id="hint">Pick a site. Name what you see.</div>
+  <div id="hint">Fly the city. Name the class. Keep the card.</div>
+  <div id="gulf-scope">
+    <div class="k">AUTHORIZED RANGE</div>
+    <div class="gd-h">This is a sandbox.</div>
+    <p>Every site is a fictional twin. You classify what you see. You do not touch live systems.</p>
+    <p>Cards prove the hour in the sim. They are not an FAA Part 107 certificate and not Security+.</p>
+    <button type="button" id="scope-go">I understand — enter</button>
+  </div>
   <div id="gulf-quiz"></div>
+  <div id="gulf-debrief"></div>
   <div id="gulf-pins" hidden></div>
   <pre id="gulf-log"></pre>
   <script src="https://unpkg.com/three@0.160.0/build/three.min.js"></script>
   <script src="js/gulf-ctf-overlay.js"></script>
   <script src="js/world-boot.js"></script>
   <script src="js/gulf-mentor-boot.js"></script>
+  <script src="js/gulf-session-end.js"></script>
+  <script>document.getElementById('scope-go').onclick=function(){document.getElementById('gulf-scope').style.display='none';};</script>
 </body>
 </html>
